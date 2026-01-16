@@ -77,8 +77,14 @@ class MediaKeyHandler {
             return .success
         }
 
+        // Previous track (skip backward)
+        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.previousTrackCommand.addTarget { [weak self] _ in
+            self?.handlePrevious()
+            return .success
+        }
+
         // Disable commands we don't support
-        commandCenter.previousTrackCommand.isEnabled = false
         commandCenter.seekForwardCommand.isEnabled = false
         commandCenter.seekBackwardCommand.isEnabled = false
         commandCenter.changePlaybackPositionCommand.isEnabled = false
@@ -109,6 +115,13 @@ class MediaKeyHandler {
     private func handleNext() {
         DispatchQueue.main.async {
             AppDelegate.shared?.nextVideo()
+            self.updateNowPlayingInfo()
+        }
+    }
+
+    private func handlePrevious() {
+        DispatchQueue.main.async {
+            AppDelegate.shared?.previousVideo()
             self.updateNowPlayingInfo()
         }
     }

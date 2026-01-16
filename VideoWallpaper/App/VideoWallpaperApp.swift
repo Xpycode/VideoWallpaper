@@ -24,6 +24,28 @@ struct VideoWallpaperApp: App {
         .commands {
             // Remove "New Window" from File menu since we only want one window
             CommandGroup(replacing: .newItem) { }
+
+            // Playback commands with keyboard shortcuts
+            CommandMenu("Playback") {
+                Button {
+                    appDelegate.togglePlayback()
+                } label: {
+                    Text(appDelegate.isPlaying ? "Pause" : "Play")
+                }
+                .keyboardShortcut(" ", modifiers: [])
+
+                Divider()
+
+                Button("Previous Video") {
+                    appDelegate.previousVideo()
+                }
+                .keyboardShortcut(.leftArrow, modifiers: .command)
+
+                Button("Next Video") {
+                    appDelegate.nextVideo()
+                }
+                .keyboardShortcut(.rightArrow, modifiers: .command)
+            }
         }
 
         // Menu bar extra for quick access
