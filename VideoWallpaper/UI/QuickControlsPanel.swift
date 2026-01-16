@@ -15,6 +15,16 @@ struct QuickControlsPanel: View {
 
     var body: some View {
         HStack(spacing: 16) {
+            // Previous video button
+            Button {
+                appDelegate.previousVideo()
+            } label: {
+                Image(systemName: "backward.fill")
+                    .font(.title3)
+            }
+            .buttonStyle(.plain)
+            .help("Previous Video")
+
             // Play/Pause button
             Button {
                 appDelegate.togglePlayback()

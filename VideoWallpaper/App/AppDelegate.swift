@@ -37,6 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     /// Cancellables for Combine subscriptions
     private var cancellables = Set<AnyCancellable>()
 
+    /// Local key event monitor for keyboard shortcuts
+    private var keyEventMonitor: Any?
+
     /// Whether audio was muted before screen lock (to restore on unlock)
     private var wasAudioMutedBeforeLock = true
 
@@ -89,9 +92,54 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         if autoPlayOnLaunch && hasVideos {
             startPlayback()
         }
+
+        // Set up keyboard shortcuts
+        setupKeyboardShortcuts()
+    }
+
+    // MARK: - Keyboard Shortcuts
+
+    private func setupKeyboardShortcuts() {
+        keyEventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self else { return event }
+
+            // Only handle if no text field is focused
+            if NSApp.keyWindow?.firstResponder is NSTextView {
+                return event
+            }
+
+            switch event.keyCode {
+            case 49: // Space bar
+                self.togglePlayback()
+                return nil // Consume the event
+
+            case 123: // Left arrow
+                if event.modifierFlags.contains(.command) {
+                    self.previousVideo()
+                    return nil
+                }
+
+            case 124: // Right arrow
+                if event.modifierFlags.contains(.command) {
+                    self.nextVideo()
+                    return nil
+                }
+
+            default:
+                break
+            }
+
+            return event // Pass through unhandled events
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        // Remove keyboard event monitor
+        if let monitor = keyEventMonitor {
+            NSEvent.removeMonitor(monitor)
+            keyEventMonitor = nil
+        }
+
         stopPlayback()
         desktopWindows.forEach { $0.close() }
         desktopWindows.removeAll()
