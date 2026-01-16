@@ -52,7 +52,8 @@ struct VideoWallpaperApp: App {
         MenuBarExtra {
             StatusMenuView()
         } label: {
-            Image(systemName: "play.rectangle.fill")
+            Image("MenuBarIcon")
+                .renderingMode(.template)
         }
         .menuBarExtraStyle(.menu)
     }

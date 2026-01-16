@@ -22,7 +22,6 @@
 		A1000001201C00000016 /* PlaylistPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000016 /* PlaylistPersistence.swift */; };
 		A1000001201C00000017 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000017 /* SyncManager.swift */; };
 		A1000001201C00000021 /* VideoMetadataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000021 /* VideoMetadataLoader.swift */; };
-		A1000001201C00000030 /* ThumbnailCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000030 /* ThumbnailCache.swift */; };
 		A1000001201C00000022 /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000022 /* SidebarItem.swift */; };
 		A1000001201C00000023 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000023 /* SidebarView.swift */; };
 		A1000001201C00000024 /* SidebarNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000024 /* SidebarNavigationView.swift */; };
@@ -31,6 +30,7 @@
 		A1000001201C00000027 /* SourceFoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000027 /* SourceFoldersView.swift */; };
 		A1000001201C00000028 /* DisplaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000028 /* DisplaySettingsView.swift */; };
 		A1000001201C00000029 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000029 /* AdvancedSettingsView.swift */; };
+		A1000001201C00000030 /* ThumbnailCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000030 /* ThumbnailCache.swift */; };
 		A1000001201C00000031 /* VideoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000031 /* VideoPreviewView.swift */; };
 		A1000001201C00000032 /* NamedPlaylist.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000032 /* NamedPlaylist.swift */; };
 		A1000001201C00000033 /* PlaylistLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000033 /* PlaylistLibrary.swift */; };
@@ -64,7 +64,6 @@
 		A1000001101C00000016 /* PlaylistPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistPersistence.swift; sourceTree = "<group>"; };
 		A1000001101C00000017 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		A1000001101C00000021 /* VideoMetadataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMetadataLoader.swift; sourceTree = "<group>"; };
-		A1000001101C00000030 /* ThumbnailCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCache.swift; sourceTree = "<group>"; };
 		A1000001101C00000022 /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
 		A1000001101C00000023 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
 		A1000001101C00000024 /* SidebarNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarNavigationView.swift; sourceTree = "<group>"; };
@@ -73,6 +72,7 @@
 		A1000001101C00000027 /* SourceFoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFoldersView.swift; sourceTree = "<group>"; };
 		A1000001101C00000028 /* DisplaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsView.swift; sourceTree = "<group>"; };
 		A1000001101C00000029 /* AdvancedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsView.swift; sourceTree = "<group>"; };
+		A1000001101C00000030 /* ThumbnailCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCache.swift; sourceTree = "<group>"; };
 		A1000001101C00000031 /* VideoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewView.swift; sourceTree = "<group>"; };
 		A1000001101C00000032 /* NamedPlaylist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedPlaylist.swift; sourceTree = "<group>"; };
 		A1000001101C00000033 /* PlaylistLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistLibrary.swift; sourceTree = "<group>"; };
@@ -464,15 +464,17 @@
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VideoWallpaper/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Video Wallpaper";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright 2026. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.videowallpaper.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lucesumbrarum.videowallpaper.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -504,15 +506,17 @@
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VideoWallpaper/Resources/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Video Wallpaper";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_LSUIElement = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright 2026. All rights reserved.";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.videowallpaper.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lucesumbrarum.videowallpaper.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
