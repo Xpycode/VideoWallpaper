@@ -1,0 +1,546 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1000001201C00000001 /* VideoWallpaperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000001 /* VideoWallpaperApp.swift */; };
+		A1000001201C00000002 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000002 /* AppDelegate.swift */; };
+		A1000001201C00000003 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000003 /* VideoPlayerManager.swift */; };
+		A1000001201C00000004 /* FolderBookmarkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000004 /* FolderBookmarkManager.swift */; };
+		A1000001201C00000005 /* PlaylistManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000005 /* PlaylistManager.swift */; };
+		A1000001201C00000006 /* DesktopWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000006 /* DesktopWindowController.swift */; };
+		A1000001201C00000007 /* DesktopVideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000007 /* DesktopVideoView.swift */; };
+		A1000001201C00000008 /* MultiMonitorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000008 /* MultiMonitorManager.swift */; };
+		A1000001201C00000009 /* StatusMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000009 /* StatusMenuView.swift */; };
+		A1000001201C00000011 /* PowerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000011 /* PowerManager.swift */; };
+		A1000001201C00000012 /* LaunchAtLoginManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000012 /* LaunchAtLoginManager.swift */; };
+		A1000001201C00000013 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000013 /* Assets.xcassets */; };
+		A1000001201C00000016 /* PlaylistPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000016 /* PlaylistPersistence.swift */; };
+		A1000001201C00000017 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000017 /* SyncManager.swift */; };
+		A1000001201C00000021 /* VideoMetadataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000021 /* VideoMetadataLoader.swift */; };
+		A1000001201C00000030 /* ThumbnailCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000030 /* ThumbnailCache.swift */; };
+		A1000001201C00000022 /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000022 /* SidebarItem.swift */; };
+		A1000001201C00000023 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000023 /* SidebarView.swift */; };
+		A1000001201C00000024 /* SidebarNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000024 /* SidebarNavigationView.swift */; };
+		A1000001201C00000025 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000025 /* NowPlayingView.swift */; };
+		A1000001201C00000026 /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000026 /* PlaylistView.swift */; };
+		A1000001201C00000027 /* SourceFoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000027 /* SourceFoldersView.swift */; };
+		A1000001201C00000028 /* DisplaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000028 /* DisplaySettingsView.swift */; };
+		A1000001201C00000029 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000029 /* AdvancedSettingsView.swift */; };
+		A1000001201C00000031 /* VideoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000031 /* VideoPreviewView.swift */; };
+		A1000001201C00000032 /* NamedPlaylist.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000032 /* NamedPlaylist.swift */; };
+		A1000001201C00000033 /* PlaylistLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000033 /* PlaylistLibrary.swift */; };
+		A1000001201C00000034 /* PlaylistLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000034 /* PlaylistLibraryView.swift */; };
+		A1000001201C00000035 /* AppVisibilityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000035 /* AppVisibilityManager.swift */; };
+		A1000001201C00000036 /* SupportInfoExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000036 /* SupportInfoExporter.swift */; };
+		A1000001201C00000037 /* MediaKeyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000037 /* MediaKeyHandler.swift */; };
+		A1000001201C00000038 /* QuickControlsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000038 /* QuickControlsWindowController.swift */; };
+		A1000001201C00000039 /* QuickControlsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000039 /* QuickControlsPanel.swift */; };
+		A1000001201C00000040 /* ScreenLockMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000040 /* ScreenLockMonitor.swift */; };
+		A1000001201C00000041 /* ConsolidatedPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000041 /* ConsolidatedPlaylistView.swift */; };
+		A1000001201C00000042 /* PlaylistTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000042 /* PlaylistTabBar.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1000001001C00000001 /* VideoWallpaper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoWallpaper.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1000001101C00000001 /* VideoWallpaperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoWallpaperApp.swift; sourceTree = "<group>"; };
+		A1000001101C00000002 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A1000001101C00000003 /* VideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000004 /* FolderBookmarkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderBookmarkManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000005 /* PlaylistManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000006 /* DesktopWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopWindowController.swift; sourceTree = "<group>"; };
+		A1000001101C00000007 /* DesktopVideoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesktopVideoView.swift; sourceTree = "<group>"; };
+		A1000001101C00000008 /* MultiMonitorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiMonitorManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000009 /* StatusMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMenuView.swift; sourceTree = "<group>"; };
+		A1000001101C00000011 /* PowerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000012 /* LaunchAtLoginManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000013 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000001101C00000014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1000001101C00000015 /* VideoWallpaper.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VideoWallpaper.entitlements; sourceTree = "<group>"; };
+		A1000001101C00000016 /* PlaylistPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistPersistence.swift; sourceTree = "<group>"; };
+		A1000001101C00000017 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000021 /* VideoMetadataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMetadataLoader.swift; sourceTree = "<group>"; };
+		A1000001101C00000030 /* ThumbnailCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCache.swift; sourceTree = "<group>"; };
+		A1000001101C00000022 /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
+		A1000001101C00000023 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
+		A1000001101C00000024 /* SidebarNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarNavigationView.swift; sourceTree = "<group>"; };
+		A1000001101C00000025 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		A1000001101C00000026 /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
+		A1000001101C00000027 /* SourceFoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFoldersView.swift; sourceTree = "<group>"; };
+		A1000001101C00000028 /* DisplaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsView.swift; sourceTree = "<group>"; };
+		A1000001101C00000029 /* AdvancedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsView.swift; sourceTree = "<group>"; };
+		A1000001101C00000031 /* VideoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewView.swift; sourceTree = "<group>"; };
+		A1000001101C00000032 /* NamedPlaylist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedPlaylist.swift; sourceTree = "<group>"; };
+		A1000001101C00000033 /* PlaylistLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistLibrary.swift; sourceTree = "<group>"; };
+		A1000001101C00000034 /* PlaylistLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistLibraryView.swift; sourceTree = "<group>"; };
+		A1000001101C00000035 /* AppVisibilityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVisibilityManager.swift; sourceTree = "<group>"; };
+		A1000001101C00000036 /* SupportInfoExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportInfoExporter.swift; sourceTree = "<group>"; };
+		A1000001101C00000037 /* MediaKeyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaKeyHandler.swift; sourceTree = "<group>"; };
+		A1000001101C00000038 /* QuickControlsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickControlsWindowController.swift; sourceTree = "<group>"; };
+		A1000001101C00000039 /* QuickControlsPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickControlsPanel.swift; sourceTree = "<group>"; };
+		A1000001101C00000040 /* ScreenLockMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockMonitor.swift; sourceTree = "<group>"; };
+		A1000001101C00000041 /* ConsolidatedPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsolidatedPlaylistView.swift; sourceTree = "<group>"; };
+		A1000001101C00000042 /* PlaylistTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTabBar.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1000001301C00000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1000001401C00000001 = {
+			isa = PBXGroup;
+			children = (
+				A1000001401C00000002 /* VideoWallpaper */,
+				A1000001401C00000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1000001401C00000002 /* VideoWallpaper */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001401C00000004 /* App */,
+				A1000001401C00000005 /* Core */,
+				A1000001401C00000006 /* Desktop */,
+				A1000001401C00000007 /* UI */,
+				A1000001401C00000008 /* Utilities */,
+				A1000001401C00000009 /* Resources */,
+			);
+			path = VideoWallpaper;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001001C00000001 /* VideoWallpaper.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000004 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001101C00000001 /* VideoWallpaperApp.swift */,
+				A1000001101C00000002 /* AppDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000005 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001101C00000003 /* VideoPlayerManager.swift */,
+				A1000001101C00000004 /* FolderBookmarkManager.swift */,
+				A1000001101C00000005 /* PlaylistManager.swift */,
+				A1000001101C00000016 /* PlaylistPersistence.swift */,
+				A1000001101C00000017 /* SyncManager.swift */,
+				A1000001101C00000021 /* VideoMetadataLoader.swift */,
+				A1000001101C00000030 /* ThumbnailCache.swift */,
+				A1000001101C00000032 /* NamedPlaylist.swift */,
+				A1000001101C00000033 /* PlaylistLibrary.swift */,
+				A1000001101C00000037 /* MediaKeyHandler.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000006 /* Desktop */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001101C00000006 /* DesktopWindowController.swift */,
+				A1000001101C00000007 /* DesktopVideoView.swift */,
+				A1000001101C00000008 /* MultiMonitorManager.swift */,
+				A1000001101C00000038 /* QuickControlsWindowController.swift */,
+			);
+			path = Desktop;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000007 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001101C00000022 /* SidebarItem.swift */,
+				A1000001101C00000023 /* SidebarView.swift */,
+				A1000001101C00000024 /* SidebarNavigationView.swift */,
+				A1000001101C00000025 /* NowPlayingView.swift */,
+				A1000001101C00000026 /* PlaylistView.swift */,
+				A1000001101C00000027 /* SourceFoldersView.swift */,
+				A1000001101C00000028 /* DisplaySettingsView.swift */,
+				A1000001101C00000029 /* AdvancedSettingsView.swift */,
+				A1000001101C00000009 /* StatusMenuView.swift */,
+				A1000001101C00000031 /* VideoPreviewView.swift */,
+				A1000001101C00000034 /* PlaylistLibraryView.swift */,
+				A1000001101C00000039 /* QuickControlsPanel.swift */,
+				A1000001101C00000041 /* ConsolidatedPlaylistView.swift */,
+				A1000001101C00000042 /* PlaylistTabBar.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000008 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001101C00000011 /* PowerManager.swift */,
+				A1000001101C00000012 /* LaunchAtLoginManager.swift */,
+				A1000001101C00000035 /* AppVisibilityManager.swift */,
+				A1000001101C00000036 /* SupportInfoExporter.swift */,
+				A1000001101C00000040 /* ScreenLockMonitor.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000009 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001101C00000013 /* Assets.xcassets */,
+				A1000001101C00000014 /* Info.plist */,
+				A1000001101C00000015 /* VideoWallpaper.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1000001501C00000001 /* VideoWallpaper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1000001601C00000001 /* Build configuration list for PBXNativeTarget "VideoWallpaper" */;
+			buildPhases = (
+				A1000001501C00000002 /* Sources */,
+				A1000001301C00000001 /* Frameworks */,
+				A1000001501C00000003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VideoWallpaper;
+			productName = VideoWallpaper;
+			productReference = A1000001001C00000001 /* VideoWallpaper.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1000001701C00000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					A1000001501C00000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = A1000001801C00000001 /* Build configuration list for PBXProject "VideoWallpaper" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1000001401C00000001;
+			productRefGroup = A1000001401C00000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A1000001501C00000001 /* VideoWallpaper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1000001501C00000003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001201C00000013 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1000001501C00000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000001201C00000001 /* VideoWallpaperApp.swift in Sources */,
+				A1000001201C00000002 /* AppDelegate.swift in Sources */,
+				A1000001201C00000003 /* VideoPlayerManager.swift in Sources */,
+				A1000001201C00000004 /* FolderBookmarkManager.swift in Sources */,
+				A1000001201C00000005 /* PlaylistManager.swift in Sources */,
+				A1000001201C00000006 /* DesktopWindowController.swift in Sources */,
+				A1000001201C00000007 /* DesktopVideoView.swift in Sources */,
+				A1000001201C00000008 /* MultiMonitorManager.swift in Sources */,
+				A1000001201C00000009 /* StatusMenuView.swift in Sources */,
+				A1000001201C00000011 /* PowerManager.swift in Sources */,
+				A1000001201C00000012 /* LaunchAtLoginManager.swift in Sources */,
+				A1000001201C00000016 /* PlaylistPersistence.swift in Sources */,
+				A1000001201C00000017 /* SyncManager.swift in Sources */,
+				A1000001201C00000021 /* VideoMetadataLoader.swift in Sources */,
+				A1000001201C00000030 /* ThumbnailCache.swift in Sources */,
+				A1000001201C00000022 /* SidebarItem.swift in Sources */,
+				A1000001201C00000023 /* SidebarView.swift in Sources */,
+				A1000001201C00000024 /* SidebarNavigationView.swift in Sources */,
+				A1000001201C00000025 /* NowPlayingView.swift in Sources */,
+				A1000001201C00000026 /* PlaylistView.swift in Sources */,
+				A1000001201C00000027 /* SourceFoldersView.swift in Sources */,
+				A1000001201C00000028 /* DisplaySettingsView.swift in Sources */,
+				A1000001201C00000029 /* AdvancedSettingsView.swift in Sources */,
+				A1000001201C00000031 /* VideoPreviewView.swift in Sources */,
+				A1000001201C00000032 /* NamedPlaylist.swift in Sources */,
+				A1000001201C00000033 /* PlaylistLibrary.swift in Sources */,
+				A1000001201C00000034 /* PlaylistLibraryView.swift in Sources */,
+				A1000001201C00000035 /* AppVisibilityManager.swift in Sources */,
+				A1000001201C00000036 /* SupportInfoExporter.swift in Sources */,
+				A1000001201C00000037 /* MediaKeyHandler.swift in Sources */,
+				A1000001201C00000038 /* QuickControlsWindowController.swift in Sources */,
+				A1000001201C00000039 /* QuickControlsPanel.swift in Sources */,
+				A1000001201C00000040 /* ScreenLockMonitor.swift in Sources */,
+				A1000001201C00000041 /* ConsolidatedPlaylistView.swift in Sources */,
+				A1000001201C00000042 /* PlaylistTabBar.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1000001901C00000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = FDMSRXXN73;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		A1000001901C00000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = FDMSRXXN73;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		A1000001901C00000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = VideoWallpaper/Resources/VideoWallpaper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VideoWallpaper/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright 2026. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.videowallpaper.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		A1000001901C00000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = VideoWallpaper/Resources/VideoWallpaper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_INCOMING_NETWORK_CONNECTIONS = NO;
+				ENABLE_OUTGOING_NETWORK_CONNECTIONS = NO;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_BLUETOOTH = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
+				ENABLE_RESOURCE_ACCESS_PRINTING = NO;
+				ENABLE_RESOURCE_ACCESS_USB = NO;
+				ENABLE_USER_SELECTED_FILES = readwrite;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = VideoWallpaper/Resources/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright 2026. All rights reserved.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.videowallpaper.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1000001601C00000001 /* Build configuration list for PBXNativeTarget "VideoWallpaper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000001901C00000003 /* Debug */,
+				A1000001901C00000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1000001801C00000001 /* Build configuration list for PBXProject "VideoWallpaper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000001901C00000001 /* Debug */,
+				A1000001901C00000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1000001701C00000001 /* Project object */;
+}

@@ -1,0 +1,158 @@
+//
+//  MediaKeyHandler.swift
+//  VideoWallpaper
+//
+//  Created by Claude on 2026-01-16.
+//
+//  Handles Now Playing info center and media key commands.
+//
+
+import Foundation
+import MediaPlayer
+
+/// Manages Now Playing info center and media remote commands.
+class MediaKeyHandler {
+
+    static let shared = MediaKeyHandler()
+
+    private var isEnabled = false
+
+    private init() {}
+
+    // MARK: - Setup
+
+    /// Enable media key handling and Now Playing integration
+    func enable() {
+        guard !isEnabled else { return }
+        isEnabled = true
+
+        setupRemoteCommands()
+        updateNowPlayingInfo()
+    }
+
+    /// Disable media key handling
+    func disable() {
+        guard isEnabled else { return }
+        isEnabled = false
+
+        let commandCenter = MPRemoteCommandCenter.shared()
+        commandCenter.playCommand.isEnabled = false
+        commandCenter.pauseCommand.isEnabled = false
+        commandCenter.togglePlayPauseCommand.isEnabled = false
+        commandCenter.nextTrackCommand.isEnabled = false
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+    }
+
+    // MARK: - Remote Commands
+
+    private func setupRemoteCommands() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        // Play command
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.playCommand.addTarget { [weak self] _ in
+            self?.handlePlay()
+            return .success
+        }
+
+        // Pause command
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.pauseCommand.addTarget { [weak self] _ in
+            self?.handlePause()
+            return .success
+        }
+
+        // Toggle play/pause (space bar, headphones button)
+        commandCenter.togglePlayPauseCommand.isEnabled = true
+        commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
+            self?.handleToggle()
+            return .success
+        }
+
+        // Next track (skip forward)
+        commandCenter.nextTrackCommand.isEnabled = true
+        commandCenter.nextTrackCommand.addTarget { [weak self] _ in
+            self?.handleNext()
+            return .success
+        }
+
+        // Disable commands we don't support
+        commandCenter.previousTrackCommand.isEnabled = false
+        commandCenter.seekForwardCommand.isEnabled = false
+        commandCenter.seekBackwardCommand.isEnabled = false
+        commandCenter.changePlaybackPositionCommand.isEnabled = false
+    }
+
+    private func handlePlay() {
+        DispatchQueue.main.async {
+            AppDelegate.shared?.startPlayback()
+            self.updatePlaybackState(isPlaying: true)
+        }
+    }
+
+    private func handlePause() {
+        DispatchQueue.main.async {
+            AppDelegate.shared?.pausePlayback()
+            self.updatePlaybackState(isPlaying: false)
+        }
+    }
+
+    private func handleToggle() {
+        DispatchQueue.main.async {
+            AppDelegate.shared?.togglePlayback()
+            let isPlaying = AppDelegate.shared?.isPlaying ?? false
+            self.updatePlaybackState(isPlaying: isPlaying)
+        }
+    }
+
+    private func handleNext() {
+        DispatchQueue.main.async {
+            AppDelegate.shared?.nextVideo()
+            self.updateNowPlayingInfo()
+        }
+    }
+
+    // MARK: - Now Playing Info
+
+    /// Update the Now Playing info with current video
+    func updateNowPlayingInfo() {
+        guard isEnabled else { return }
+
+        guard let appDelegate = AppDelegate.shared,
+              let playerManager = appDelegate.primaryPlayerManager else {
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = nil
+            return
+        }
+
+        var info: [String: Any] = [
+            MPMediaItemPropertyTitle: playerManager.currentVideoName,
+            MPMediaItemPropertyArtist: "Video Wallpaper",
+            MPMediaItemPropertyPlaybackDuration: playerManager.duration,
+            MPNowPlayingInfoPropertyElapsedPlaybackTime: playerManager.currentTime,
+            MPNowPlayingInfoPropertyPlaybackRate: appDelegate.isPlaying ? 1.0 : 0.0
+        ]
+
+        // Add index info if we have multiple videos
+        if playerManager.totalVideoCount > 1 {
+            info[MPMediaItemPropertyAlbumTitle] = "Video \(playerManager.currentIndex + 1) of \(playerManager.totalVideoCount)"
+        }
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+
+    /// Update just the playback state (more efficient than full update)
+    func updatePlaybackState(isPlaying: Bool) {
+        guard isEnabled else { return }
+
+        var info = MPNowPlayingInfoCenter.default().nowPlayingInfo ?? [:]
+        info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
+
+        if let appDelegate = AppDelegate.shared,
+           let playerManager = appDelegate.primaryPlayerManager {
+            info[MPNowPlayingInfoPropertyElapsedPlaybackTime] = playerManager.currentTime
+        }
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+    }
+}
