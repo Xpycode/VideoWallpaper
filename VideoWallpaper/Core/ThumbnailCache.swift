@@ -79,21 +79,23 @@ final class ThumbnailCache: ObservableObject {
             return
         }
 
-        Task {
-            let image = await generateThumbnailAsync(for: url)
+        Task { [weak self] in
+            guard let self = self else { return }
 
-            queue.sync {
-                _ = generatingURLs.remove(url)
+            let image = await self.generateThumbnailAsync(for: url)
+
+            self.queue.sync {
+                _ = self.generatingURLs.remove(url)
             }
 
             if let image = image {
-                cache.setObject(image, forKey: url as NSURL)
-                DispatchQueue.main.async {
+                self.cache.setObject(image, forKey: url as NSURL)
+                _ = await MainActor.run {
                     self.cachedURLs.insert(url)
                 }
             }
 
-            await MainActor.run {
+            _ = await MainActor.run {
                 completion(image)
             }
         }
@@ -129,7 +131,7 @@ final class ThumbnailCache: ObservableObject {
 
             // Cache it
             cache.setObject(nsImage, forKey: url as NSURL)
-            await MainActor.run {
+            _ = await MainActor.run {
                 cachedURLs.insert(url)
             }
 
