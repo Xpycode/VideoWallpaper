@@ -37,3 +37,6 @@ fastlane/test_output
 
 # Source icon exports
 Icon Exports/
+
+# Export/Release artifacts
+04-Export/
