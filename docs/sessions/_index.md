@@ -10,6 +10,7 @@ Video Wallpaper - macOS menu bar app for video desktop wallpaper
 
 | Date | Focus | Outcome | Log |
 |------|-------|---------|-----|
+| 2026-01-17 | Playlist Sync Fix (Part 4) | Fixed disconnect between Video Folders and PlaylistLibrary UI | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | Bug Fixes (Part 3) | Fixed global hotkey permissions + UI freeze from startMonitoring during init | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | Feature Implementation (Part 2) | Implemented 4 features: playback speed, quick volume, schedule, global hotkeys | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | Fixing Plan Implementation | Implemented all 9 critical/high priority bug fixes from code reviews | [2026-01-17](2026-01-17.md) |
