@@ -10,6 +10,8 @@ Video Wallpaper - macOS menu bar app for video desktop wallpaper
 
 | Date | Focus | Outcome | Log |
 |------|-------|---------|-----|
+| 2026-01-17 | **v1.0 Release (Part 11)** | Sparkle integration, DMG, GitHub release - **PUBLISHED** | [2026-01-17](2026-01-17.md) |
+| 2026-01-17 | Per-Display Controls (Part 10) | Added inline prev/play/next buttons per display card | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | UI Improvements (Part 9) | Renamed "Default" to "All Videos", added multi-display Now Playing | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | Swift 6 Concurrency Fix (Part 8) | Fixed @MainActor isolation errors in AppDelegate, build succeeded | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | MCP Verification (Part 7) | Used Serena to verify all 24 issues - only 1/24 actually fixed | [2026-01-17](2026-01-17.md) |
