@@ -3,32 +3,39 @@
 ## Quick Facts
 - **Project:** Video Wallpaper
 - **Started:** 2026-01-01
-- **Current Phase:** implementation
-- **Last Session:** 2026-01-01
+- **Current Phase:** published
+- **Last Session:** 2026-01-17
+- **Version:** 1.0 (released 2026-01-17)
 
 ## Current Focus
-Per-monitor playlist support complete. App has:
-- Tabbed window with 5 tabs (Status, Playlist, Folders, Display, Advanced)
-- Per-monitor playlists with independent exclusions/ordering/shuffle/loop
-- Sync displays mode (video wall)
-- Video metadata (duration, resolution) in playlist
-- Multi-monitor support working
+**v1.0 Released** - App is published on GitHub with:
+- Full multi-monitor support with per-display playlists
+- Sync mode for video wall effect
+- Sparkle auto-updates configured
+- Menu bar controls
+- Playlist management with shuffle/loop
+- Power-aware playback (pause on battery)
+- Launch at login
+
+## Release Info
+- **GitHub:** https://github.com/Xpycode/VideoWallpaper
+- **Release:** https://github.com/Xpycode/VideoWallpaper/releases/tag/v1.0
+- **DMG:** VideoWallpaper-v1.0.dmg (build 2)
 
 ## Key Decisions Made
 [See decisions.md for full history]
 - 2026-01-01: Desktop window level for video behind icons
-- 2026-01-01: Per-screen VideoPlayerManager architecture (vs shared)
+- 2026-01-01: Per-screen VideoPlayerManager architecture
 - 2026-01-01: Per-monitor playlists with shared video pool
+- 2026-01-17: Sparkle auto-updates with shared EdDSA key (from CropBatch)
 
 ## Blockers
-None currently.
+None.
 
-## Next Actions
-1. [ ] Test with various video codecs (VRP errors seen with some files)
-2. [ ] Add thumbnail previews in playlist (optional enhancement)
-3. [ ] Add video duration display in Status tab
-4. [ ] Add "Synced" indicator in Status tab when sync mode enabled
-5. [ ] Clean up old MainWindowView/StatusRow code (unused)
+## Future Enhancements (post-v1.0)
+- [ ] Test with various video codecs
+- [ ] Thumbnail previews in playlist
+- [ ] Video duration in status display
 
 ---
-*Updated 2026-01-16 by Claude during migration to Directions*
+*v1.0 published 2026-01-17*
