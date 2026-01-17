@@ -15,6 +15,7 @@ struct DisplaySettingsView: View {
     @AppStorage("transitionDuration") private var transitionDuration = 1.5
     @AppStorage("audioMuted") private var audioMuted = true
     @AppStorage("audioVolume") private var audioVolume = 0.5
+    @AppStorage("playbackRate") private var playbackRate = 1.0
     @ObservedObject private var syncManager = SyncManager.shared
     @ObservedObject private var playlistLibrary = PlaylistLibrary.shared
     @ObservedObject private var playlistPersistence = PlaylistPersistence.shared
@@ -68,6 +69,20 @@ struct DisplaySettingsView: View {
                 }
             } header: {
                 Text("Transitions")
+            }
+
+            Section {
+                HStack {
+                    Text("Playback Speed")
+                    Slider(value: $playbackRate, in: 0.5...2.0, step: 0.25)
+                    Text(String(format: "%.2fx", playbackRate))
+                        .frame(width: 50)
+                        .monospacedDigit()
+                }
+            } header: {
+                Text("Playback")
+            } footer: {
+                Text("Adjust video playback speed. 1.0x is normal speed.")
             }
 
             Section {

@@ -34,6 +34,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     /// Sync manager for coordinated playback
     private let syncManager = SyncManager.shared
 
+    /// Schedule manager for timed playback
+    private let scheduleManager = ScheduleManager.shared
+
+    /// Hotkey manager for global shortcuts
+    private let hotkeyManager = HotkeyManager.shared
+
     /// Cancellables for Combine subscriptions
     private var cancellables = Set<AnyCancellable>()
 
@@ -83,6 +89,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
         // Set up screen lock monitoring
         setupScreenLockMonitoring()
+
+        // Set up schedule monitoring
+        setupScheduleMonitoring()
 
         // Create desktop windows for all screens
         createDesktopWindows()
@@ -280,6 +289,41 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         // Restore previous mute state
         if !wasAudioMutedBeforeLock {
             setAudioMutedForAllPlayers(false)
+        }
+    }
+
+    // MARK: - Schedule Monitoring
+
+    /// Whether playback was paused by schedule (to distinguish from manual pause)
+    private var pausedBySchedule = false
+
+    private func setupScheduleMonitoring() {
+        scheduleManager.startMonitoring()
+
+        scheduleManager.$isWithinSchedule
+            .dropFirst() // Skip initial value
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] withinSchedule in
+                self?.handleScheduleChange(withinSchedule: withinSchedule)
+            }
+            .store(in: &cancellables)
+    }
+
+    private func handleScheduleChange(withinSchedule: Bool) {
+        guard scheduleManager.isEnabled else { return }
+
+        if withinSchedule {
+            // Schedule allows playback - resume if we paused it
+            if pausedBySchedule && !isPlaying {
+                startPlayback()
+                pausedBySchedule = false
+            }
+        } else {
+            // Outside schedule - pause if playing
+            if isPlaying {
+                pausePlayback()
+                pausedBySchedule = true
+            }
         }
     }
 

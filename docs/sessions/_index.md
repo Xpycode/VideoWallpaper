@@ -10,6 +10,8 @@ Video Wallpaper - macOS menu bar app for video desktop wallpaper
 
 | Date | Focus | Outcome | Log |
 |------|-------|---------|-----|
+| 2026-01-17 | Bug Fixes (Part 3) | Fixed global hotkey permissions + UI freeze from startMonitoring during init | [2026-01-17](2026-01-17.md) |
+| 2026-01-17 | Feature Implementation (Part 2) | Implemented 4 features: playback speed, quick volume, schedule, global hotkeys | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | Fixing Plan Implementation | Implemented all 9 critical/high priority bug fixes from code reviews | [2026-01-17](2026-01-17.md) |
 | 2026-01-16 | Fixing Plan Validation (Session 9) | Validated issues with Gemini 2.5 Pro, refined fixes, reordered phases | [2026-01-16](2026-01-16.md) |
 | 2026-01-16 | Code Review Consolidation (Session 8) | Compared 3 reviews (Opus/Gemini/Codex), created fixing-plan.md with 20 prioritized issues | [2026-01-16](2026-01-16.md) |

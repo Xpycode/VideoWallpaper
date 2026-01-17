@@ -12,6 +12,9 @@ import AppKit
 
 /// The content view for the menu bar dropdown.
 struct StatusMenuView: View {
+    @AppStorage("audioMuted") private var audioMuted = true
+    @AppStorage("audioVolume") private var audioVolume = 0.5
+
     // Access AppDelegate safely - it may be nil during initial SwiftUI body evaluation
     private var appDelegate: AppDelegate? {
         AppDelegate.shared
@@ -63,6 +66,26 @@ struct StatusMenuView: View {
                     Label("Next Videos", systemImage: "forward.fill")
                 }
             }
+
+            Divider()
+
+            // Volume controls
+            HStack(spacing: 8) {
+                Button {
+                    audioMuted.toggle()
+                } label: {
+                    Image(systemName: audioMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                        .frame(width: 16)
+                }
+                .buttonStyle(.plain)
+
+                Slider(value: $audioVolume, in: 0...1)
+                    .frame(width: 100)
+                    .disabled(audioMuted)
+                    .opacity(audioMuted ? 0.5 : 1.0)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 6)
 
             Divider()
 

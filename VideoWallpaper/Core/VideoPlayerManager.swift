@@ -140,11 +140,13 @@ class VideoPlayerManager: ObservableObject {
         let preventSleep = UserDefaults.standard.bool(forKey: "preventDisplaySleep")
         let audioMuted = UserDefaults.standard.object(forKey: "audioMuted") as? Bool ?? true
         let audioVolume = UserDefaults.standard.object(forKey: "audioVolume") as? Float ?? 0.5
+        let playbackRate = UserDefaults.standard.object(forKey: "playbackRate") as? Float ?? 1.0
 
         for player in [playerA, playerB] {
             player.preventsDisplaySleepDuringVideoPlayback = preventSleep
             player.isMuted = audioMuted
             player.volume = audioVolume
+            player.rate = isPlaying ? playbackRate.clamped(to: 0.5...2.0) : 0
         }
     }
 
@@ -163,7 +165,8 @@ class VideoPlayerManager: ObservableObject {
         if currentVideoIndex < 0 {
             prepareNextVideo()
         } else {
-            activePlayer.play()
+            let playbackRate = UserDefaults.standard.object(forKey: "playbackRate") as? Float ?? 1.0
+            activePlayer.rate = playbackRate.clamped(to: 0.5...2.0)
         }
         isPlaying = true
     }
@@ -343,8 +346,9 @@ class VideoPlayerManager: ObservableObject {
         // Remove old notification observers
         removePlaybackNotificationObservers()
 
-        // Start new player
-        newPlayer.play()
+        // Start new player with configured rate
+        let playbackRate = UserDefaults.standard.object(forKey: "playbackRate") as? Float ?? 1.0
+        newPlayer.rate = playbackRate.clamped(to: 0.5...2.0)
 
         // Update duration for new video
         updateDuration()

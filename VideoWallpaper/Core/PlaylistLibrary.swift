@@ -29,6 +29,8 @@ class PlaylistLibrary: ObservableObject {
     private init() {
         loadPlaylists()
         migrateIfNeeded()
+        // Auto-sync disabled - use manual refresh button instead
+        // The folder scanning blocks the main thread too long
     }
 
     // MARK: - CRUD Operations
@@ -183,6 +185,9 @@ class PlaylistLibrary: ObservableObject {
             print("PlaylistLibrary: Migrated \(allItems.count) videos to Default playlist")
         }
     }
+
+    // MARK: - Auto-Sync from Video Folders
+
 }
 
 // MARK: - Notification Names
