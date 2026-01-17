@@ -41,7 +41,9 @@ A macOS menu bar app that displays videos as animated desktop wallpaper.
 ![Advanced Settings - Scheduling](03_Screenshots/VW-05-Advanced2.png)
 
 ### Menu Bar
-![Menu Bar Icon](03_Screenshots/VW-11-MenuBarIcon.png) ![Menu Bar Popover](03_Screenshots/VW-11-MenuBarPopover.png)
+![Menu Bar Popover](03_Screenshots/VW-11-MenuBarPopover.png)
+
+![Menu Bar Icon](03_Screenshots/VW-11-MenuBarIcon.png) 
 
 ## Installation
 
