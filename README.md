@@ -3,8 +3,11 @@
 A macOS menu bar app that displays videos as animated desktop wallpaper.
 
 ![macOS](https://img.shields.io/badge/macOS-13.0+-blue)
+![Swift](https://img.shields.io/badge/Swift-5.0-orange)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Version](https://img.shields.io/badge/version-1.0-orange)
+![Version](https://img.shields.io/badge/version-1.0-blue)
+[![Download](https://img.shields.io/badge/Download-v1.0-brightgreen)](https://github.com/Xpycode/VideoWallpaper/releases/download/v1.0/VideoWallpaper-v1.0.dmg)
+![Downloads](https://img.shields.io/github/downloads/Xpycode/VideoWallpaper/total)
 
 ![Video Wallpaper Hero](03_Screenshots/VW-DesktopWithApp-HERO.jpeg)
 
