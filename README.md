@@ -6,12 +6,7 @@ A macOS menu bar app that displays videos as animated desktop wallpaper.
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Version](https://img.shields.io/badge/version-1.0-orange)
 
-<!--
-## Screenshots
-
-![Main Window](03_Screenshots/main-window.png)
-![Menu Bar](03_Screenshots/menu-bar.png)
--->
+![Video Wallpaper Hero](03_Screenshots/VW-DesktopWithApp-HERO.jpeg)
 
 ## Features
 
@@ -22,6 +17,28 @@ A macOS menu bar app that displays videos as animated desktop wallpaper.
 - **Smooth Transitions** — Crossfade between videos for seamless playback
 - **Power Aware** — Automatically pause on battery power to save energy
 - **Launch at Login** — Start automatically when you log in
+
+## Screenshots
+
+### Now Playing
+![Now Playing](03_Screenshots/VW-01-NowPlaying.png)
+
+### Playlists
+![Playlists](03_Screenshots/VW-02-Playlists1.png)
+![Playlist Editor](03_Screenshots/VW-02-Playlists2.png)
+
+### Video Folders
+![Video Folders](03_Screenshots/VW-03-Folders.png)
+
+### Display Settings
+![Display Settings](03_Screenshots/VW-04-Display.png)
+
+### Advanced Settings
+![Advanced Settings](03_Screenshots/VW-05-Advanced1.png)
+![Advanced Settings - Scheduling](03_Screenshots/VW-05-Advanced2.png)
+
+### Menu Bar
+![Menu Bar Icon](03_Screenshots/VW-11-MenuBarIcon.png) ![Menu Bar Popover](03_Screenshots/VW-11-MenuBarPopover.png)
 
 ## Installation
 
@@ -38,8 +55,8 @@ A macOS menu bar app that displays videos as animated desktop wallpaper.
 
 ## Usage
 
-1. **Add Video Folders** — Go to Settings → Source Folders and add folders containing your videos
-2. **Select Videos** — Choose which videos to include in your playlist
+1. **Add Video Folders** — Go to Video Folders and add folders containing your videos
+2. **Create Playlists** — Organize videos into playlists in the Playlists tab
 3. **Play** — Click Play in the menu bar or main window
 
 ### Keyboard Shortcuts
@@ -53,7 +70,7 @@ A macOS menu bar app that displays videos as animated desktop wallpaper.
 ### Multi-Monitor
 
 - **Independent Mode** — Each display has its own playlist and playback controls
-- **Sync Mode** — All displays show the same video simultaneously (Settings → Sync Displays)
+- **Sync Mode** — All displays show the same video simultaneously (Display → Sync Displays)
 
 ## Building from Source
 

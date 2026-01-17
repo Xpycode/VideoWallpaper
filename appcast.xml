@@ -38,11 +38,11 @@
             ]]></description>
             <enclosure
                 url="https://github.com/Xpycode/VideoWallpaper/releases/download/v1.0/VideoWallpaper-v1.0.dmg"
-                sparkle:version="1"
+                sparkle:version="2"
                 sparkle:shortVersionString="1.0"
-                length="13715378"
+                length="13711450"
                 type="application/octet-stream"
-                sparkle:edSignature="GBNs4gcqotnDmp/1+xVAv2gn459kkHw+9g+gZ9I/07cmBU95LXCotTz7SrFGP0L2H1s9IcahpoKHoYs3YMcVBQ=="
+                sparkle:edSignature="rMy0slZGABxPyzccT27BY6jdae6P5CdQrNDOWSUUsKCYdRqMR7cmCHjok6wZ+aM2pyWcL5osdsCEEbnvdsX/Dg=="
             />
             <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
         </item>
