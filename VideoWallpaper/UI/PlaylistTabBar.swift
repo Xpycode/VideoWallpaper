@@ -137,8 +137,8 @@ private struct PlaylistTab: View {
 
         Divider()
 
-        // Don't allow deleting the Default playlist
-        if playlist.name != "Default" {
+        // Don't allow deleting the All Videos playlist
+        if playlist.name != PlaylistLibrary.allVideosPlaylistName {
             Button(role: .destructive) {
                 onDelete()
             } label: {
@@ -158,7 +158,7 @@ private struct PlaylistTab: View {
 #Preview {
     PlaylistTabBar(
         playlists: [
-            NamedPlaylist(name: "Default"),
+            NamedPlaylist(name: "All Videos"),
             NamedPlaylist(name: "Nature"),
             NamedPlaylist(name: "Abstract")
         ],

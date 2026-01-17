@@ -155,7 +155,7 @@ struct PlaylistView: View {
                     }
                     if !syncManager.isSyncEnabled && selectedScreenId != "default" {
                         Divider()
-                        Button("Copy from Default") {
+                        Button("Copy from All Videos") {
                             persistence.copyFrom(PlaylistPersistence.shared)
                             refreshTrigger = UUID()
                         }
@@ -200,7 +200,7 @@ struct PlaylistView: View {
                         Text("Initialize this monitor's playlist")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        Button("Copy from Default Playlist") {
+                        Button("Copy from All Videos Playlist") {
                             persistence.copyFrom(PlaylistPersistence.shared)
                             refreshTrigger = UUID()
                         }

@@ -13,16 +13,33 @@ import AVFoundation
 struct NowPlayingView: View {
     @EnvironmentObject private var appDelegate: AppDelegate
 
-    /// The player manager to observe for playback state
-    private var playerManager: VideoPlayerManager? {
-        appDelegate.primaryPlayerManager
+    /// All active display player managers
+    private var displayManagers: [(screenName: String, manager: VideoPlayerManager)] {
+        appDelegate.allDisplayPlayerManagers
+    }
+
+    /// Whether we have any videos playing
+    private var hasAnyVideos: Bool {
+        displayManagers.contains { $0.manager.hasVideos }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            if let manager = playerManager, manager.hasVideos {
-                // Has videos - show now playing info
-                NowPlayingContent(manager: manager, appDelegate: appDelegate)
+            if hasAnyVideos {
+                if displayManagers.count == 1 {
+                    // Single display - show full content
+                    if let first = displayManagers.first {
+                        NowPlayingContent(
+                            manager: first.manager,
+                            appDelegate: appDelegate,
+                            screenName: first.screenName,
+                            showScreenName: false
+                        )
+                    }
+                } else {
+                    // Multiple displays - show grid/list
+                    MultiDisplayNowPlaying(displays: displayManagers, appDelegate: appDelegate)
+                }
             } else {
                 // No videos - show empty state
                 EmptyStateView()
@@ -32,11 +49,135 @@ struct NowPlayingView: View {
     }
 }
 
-// MARK: - Now Playing Content
+// MARK: - Multi Display Now Playing
+
+private struct MultiDisplayNowPlaying: View {
+    let displays: [(screenName: String, manager: VideoPlayerManager)]
+    @ObservedObject var appDelegate: AppDelegate
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Global controls at top
+            HStack(spacing: 16) {
+                Button {
+                    appDelegate.previousVideo()
+                } label: {
+                    Image(systemName: "backward.fill")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    appDelegate.togglePlayback()
+                } label: {
+                    Image(systemName: appDelegate.isPlaying ? "pause.fill" : "play.fill")
+                        .font(.title2)
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    appDelegate.nextVideo()
+                } label: {
+                    Image(systemName: "forward.fill")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+
+                Spacer()
+
+                // Status badge
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(appDelegate.isPlaying ? Color.green : Color.orange)
+                        .frame(width: 8, height: 8)
+                    Text(appDelegate.isPlaying ? "Playing" : "Paused")
+                        .font(.caption)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(.ultraThinMaterial, in: Capsule())
+            }
+            .padding()
+
+            Divider()
+
+            // Display cards
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    ForEach(Array(displays.enumerated()), id: \.offset) { _, display in
+                        DisplayCard(
+                            screenName: display.screenName,
+                            manager: display.manager
+                        )
+                    }
+                }
+                .padding()
+            }
+        }
+    }
+}
+
+// MARK: - Display Card (for multi-display view)
+
+private struct DisplayCard: View {
+    let screenName: String
+    @ObservedObject var manager: VideoPlayerManager
+
+    var body: some View {
+        HStack(spacing: 12) {
+            // Video preview thumbnail
+            VideoPreviewView(playerManager: manager)
+                .aspectRatio(16/9, contentMode: .fit)
+                .frame(width: 160)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            // Info
+            VStack(alignment: .leading, spacing: 4) {
+                // Screen name
+                Text(screenName)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                // Video name
+                Text(manager.currentVideoName)
+                    .font(.headline)
+                    .lineLimit(1)
+
+                // Playlist and index
+                HStack(spacing: 6) {
+                    if manager.totalVideoCount > 0 {
+                        Text("\(manager.currentIndex + 1)/\(manager.totalVideoCount)")
+                            .foregroundColor(.secondary)
+                    }
+                    if let playlist = manager.activePlaylist {
+                        Text("•")
+                            .foregroundColor(.secondary)
+                        Text(playlist.name)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                .font(.caption)
+
+                // Progress
+                ProgressBar(value: manager.currentTime, total: manager.duration)
+                    .frame(height: 4)
+            }
+
+            Spacer()
+        }
+        .padding(12)
+        .background(Color(nsColor: .controlBackgroundColor))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+// MARK: - Now Playing Content (single display)
 
 private struct NowPlayingContent: View {
     @ObservedObject var manager: VideoPlayerManager
     @ObservedObject var appDelegate: AppDelegate
+    let screenName: String
+    let showScreenName: Bool
     @State private var isHovering = false
 
     /// The name of the currently active playlist, if any
@@ -59,6 +200,13 @@ private struct NowPlayingContent: View {
                     // Top: Video name and playlist
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
+                            if showScreenName {
+                                Text(screenName)
+                                    .font(.caption)
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .shadow(color: .black.opacity(0.5), radius: 2)
+                            }
+
                             Text(manager.currentVideoName)
                                 .font(.headline)
                                 .fontWeight(.semibold)

@@ -77,8 +77,8 @@ struct ConsolidatedPlaylistView: View {
                     library.duplicatePlaylist(playlist)
                 },
                 onDelete: { playlist in
-                    // Don't delete Default playlist
-                    if playlist.name != "Default" {
+                    // Don't delete All Videos playlist
+                    if playlist.name != PlaylistLibrary.allVideosPlaylistName {
                         library.deletePlaylist(id: playlist.id)
                         // Select another playlist if this was selected
                         if selectedPlaylistId == playlist.id {
@@ -304,11 +304,11 @@ struct ConsolidatedPlaylistView: View {
 
             // Refresh button
             Button {
-                refreshDefaultPlaylist()
+                refreshAllVideosPlaylist()
             } label: {
                 Image(systemName: "arrow.clockwise")
             }
-            .help("Sync Default playlist with source folders")
+            .help("Sync All Videos playlist with source folders")
         }
         .padding(.horizontal)
         .padding(.vertical, 10)
@@ -371,12 +371,12 @@ struct ConsolidatedPlaylistView: View {
                 .foregroundColor(.secondary)
             Text("No videos in playlist")
                 .font(.headline)
-            if selectedPlaylist?.name == "Default" {
+            if selectedPlaylist?.name == PlaylistLibrary.allVideosPlaylistName {
                 Text("Add video folders in Video Folders")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             } else {
-                Text("Add videos from Video Folders or Default playlist")
+                Text("Add videos from Video Folders or All Videos playlist")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
@@ -565,14 +565,14 @@ struct ConsolidatedPlaylistView: View {
         refreshTrigger = UUID()
     }
 
-    private func refreshDefaultPlaylist() {
-        // Sync Default playlist with source folders
-        guard let defaultPlaylist = library.playlists.first(where: { $0.name == "Default" }) else { return }
+    private func refreshAllVideosPlaylist() {
+        // Sync All Videos playlist with source folders
+        guard let allVideosPlaylist = library.playlists.first(where: { $0.name == PlaylistLibrary.allVideosPlaylistName }) else { return }
 
         folderManager.loadBookmarks()
         let urls = folderManager.loadAllVideoURLs()
 
-        var updated = defaultPlaylist
+        var updated = allVideosPlaylist
         var existingKeys = Set(updated.items.map { $0.lookupKey })
 
         // Add new videos

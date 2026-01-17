@@ -68,6 +68,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         return desktopWindows.first?.playerManager
     }
 
+    /// All active display player managers with their screen info
+    /// In sync mode, returns a single entry. In independent mode, returns one per display.
+    var allDisplayPlayerManagers: [(screenName: String, manager: VideoPlayerManager)] {
+        if syncManager.isSyncEnabled {
+            if let manager = syncManager.sharedPlayerManager {
+                return [(screenName: "All Displays (Synced)", manager: manager)]
+            }
+            return []
+        }
+
+        return desktopWindows.map { controller in
+            (screenName: controller.screenName, manager: controller.playerManager)
+        }
+    }
+
     // MARK: - Application Lifecycle
 
     func applicationDidFinishLaunching(_ notification: Notification) {
