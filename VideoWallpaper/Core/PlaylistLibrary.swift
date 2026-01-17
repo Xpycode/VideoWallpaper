@@ -29,8 +29,18 @@ class PlaylistLibrary: ObservableObject {
     private init() {
         loadPlaylists()
         migrateIfNeeded()
-        // Auto-sync disabled - use manual refresh button instead
-        // The folder scanning blocks the main thread too long
+
+        // Observe folder changes to sync Default playlist
+        NotificationCenter.default.addObserver(
+            forName: .videoFoldersDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.syncFromVideoFolders()
+        }
+
+        // Initial sync if no playlists exist or Default needs updating
+        syncFromVideoFolders()
     }
 
     // MARK: - CRUD Operations
@@ -188,6 +198,78 @@ class PlaylistLibrary: ObservableObject {
 
     // MARK: - Auto-Sync from Video Folders
 
+    /// Syncs the "Default" playlist with videos from configured video folders.
+    /// Creates the Default playlist if it doesn't exist.
+    /// Runs folder scanning on a background queue to avoid blocking the UI.
+    func syncFromVideoFolders() {
+        // Run folder scanning on background queue
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            let folderManager = FolderBookmarkManager()
+            folderManager.loadBookmarks()
+            let videoURLs = folderManager.loadAllVideoURLs()
+
+            // Convert to PlaylistItems
+            let items = videoURLs.map { PlaylistItem(url: $0) }
+
+            // Update on main queue
+            DispatchQueue.main.async {
+                self?.updateDefaultPlaylist(with: items)
+            }
+        }
+    }
+
+    /// Updates or creates the Default playlist with the given items.
+    private func updateDefaultPlaylist(with items: [PlaylistItem]) {
+        var defaultPlaylistId: UUID?
+
+        // Find existing Default playlist
+        if let index = playlists.firstIndex(where: { $0.name == "Default" }) {
+            // Merge: add new items, preserve existing exclusion settings
+            var existing = playlists[index]
+            let existingKeys = Set(existing.items.map { $0.lookupKey })
+
+            // Keep existing items (with their exclusion state) + add new ones
+            var mergedItems = existing.items
+            for item in items where !existingKeys.contains(item.lookupKey) {
+                mergedItems.append(item)
+            }
+
+            // Remove items that no longer exist in folders
+            let currentKeys = Set(items.map { $0.lookupKey })
+            mergedItems.removeAll { !currentKeys.contains($0.lookupKey) }
+
+            existing.items = mergedItems
+            existing.modifiedDate = Date()
+            playlists[index] = existing
+            defaultPlaylistId = existing.id
+            savePlaylists()
+
+            print("PlaylistLibrary: Synced Default playlist, \(mergedItems.count) videos")
+        } else if !items.isEmpty {
+            // Create new Default playlist
+            let playlist = createPlaylist(name: "Default", items: items)
+            defaultPlaylistId = playlist.id
+            print("PlaylistLibrary: Created Default playlist with \(items.count) videos")
+        }
+
+        // Auto-assign Default playlist if nothing is assigned for playback
+        if let defaultId = defaultPlaylistId {
+            autoAssignDefaultPlaylist(id: defaultId)
+        }
+
+        // Notify observers
+        NotificationCenter.default.post(name: .playlistDidChange, object: self)
+    }
+
+    /// Auto-assigns the Default playlist to screens that have no playlist assigned.
+    private func autoAssignDefaultPlaylist(id: UUID) {
+        // Assign to shared/default persistence if not already assigned
+        let shared = PlaylistPersistence.shared
+        if shared.assignedPlaylistId == nil {
+            shared.assignedPlaylistId = id
+            print("PlaylistLibrary: Auto-assigned Default playlist to shared persistence")
+        }
+    }
 }
 
 // MARK: - Notification Names

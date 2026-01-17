@@ -157,6 +157,9 @@ class FolderBookmarkManager: ObservableObject {
             os_log(.info, log: log, "Added folder: %{public}@ (security-scoped: %{public}@)",
                    url.path, hasSecurityAccess ? "yes" : "no")
 
+            // Notify that folders changed
+            NotificationCenter.default.post(name: .videoFoldersDidChange, object: nil)
+
             return true
         } catch {
             os_log(.error, log: log, "Failed to create bookmark: %{public}@", error.localizedDescription)
@@ -205,6 +208,9 @@ class FolderBookmarkManager: ObservableObject {
             bookmarks.remove(at: index)
             UserDefaults.standard.set(bookmarks, forKey: Self.bookmarksKey)
         }
+
+        // Notify that folders changed
+        NotificationCenter.default.post(name: .videoFoldersDidChange, object: nil)
     }
 
     /// Stops accessing all security-scoped resources
@@ -291,4 +297,11 @@ class FolderBookmarkManager: ObservableObject {
 
         return videoURLs
     }
+}
+
+// MARK: - Notification Names
+
+extension Notification.Name {
+    /// Posted when video folders are added or removed.
+    static let videoFoldersDidChange = Notification.Name("videoFoldersDidChange")
 }
