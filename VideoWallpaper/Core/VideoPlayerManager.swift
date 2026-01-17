@@ -77,6 +77,11 @@ class VideoPlayerManager: ObservableObject {
         playlistManager.videoURLs.count > 0
     }
 
+    /// The currently active named playlist, if any
+    var activePlaylist: NamedPlaylist? {
+        playlistManager.activeNamedPlaylist
+    }
+
     // MARK: - Logging
 
     private let log = OSLog(subsystem: "com.videowallpaper", category: "playback")
@@ -456,7 +461,7 @@ class VideoPlayerManager: ObservableObject {
         removePlaybackNotificationObservers()
 
         // Check if we should loop or stop
-        let isLooping = UserDefaults.standard.bool(forKey: "loop")
+        let isLooping = playlistManager.loopEnabled
         if isLooping || currentVideoIndex < playlistManager.videoURLs.count - 1 {
             prepareNextVideo()
         } else {

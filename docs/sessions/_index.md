@@ -10,6 +10,10 @@ Video Wallpaper - macOS menu bar app for video desktop wallpaper
 
 | Date | Focus | Outcome | Log |
 |------|-------|---------|-----|
+| 2026-01-17 | Fixing Plan Implementation | Implemented all 9 critical/high priority bug fixes from code reviews | [2026-01-17](2026-01-17.md) |
+| 2026-01-16 | Fixing Plan Validation (Session 9) | Validated issues with Gemini 2.5 Pro, refined fixes, reordered phases | [2026-01-16](2026-01-16.md) |
+| 2026-01-16 | Code Review Consolidation (Session 8) | Compared 3 reviews (Opus/Gemini/Codex), created fixing-plan.md with 20 prioritized issues | [2026-01-16](2026-01-16.md) |
+| 2026-01-16 | Code Review (Session 7) | Full codebase review, identified issues, wrote report | [2026-01-16](2026-01-16.md) |
 | 2026-01-16 | Consolidated Playlist UI (Session 4) | Tabbed playlist interface, connected NamedPlaylist to playback | [2026-01-16](2026-01-16.md) |
 | 2026-01-16 | Portal Features (Session 3) | All 13 features: named playlists, media keys, quick controls, immersive Now Playing | [2026-01-16](2026-01-16.md) |
 | 2026-01-16 | Video Previews (Session 2) | Live video preview, thumbnails, forced dark mode | [2026-01-16](2026-01-16.md) |

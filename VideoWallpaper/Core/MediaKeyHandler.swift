@@ -17,6 +17,9 @@ class MediaKeyHandler {
 
     private var isEnabled = false
 
+    /// Track whether we've registered command targets (only do once)
+    private var commandTargetsRegistered = false
+
     private init() {}
 
     // MARK: - Setup
@@ -49,40 +52,47 @@ class MediaKeyHandler {
     private func setupRemoteCommands() {
         let commandCenter = MPRemoteCommandCenter.shared()
 
-        // Play command
+        // Only register targets once to prevent accumulation
+        if !commandTargetsRegistered {
+            commandTargetsRegistered = true
+
+            // Play command
+            commandCenter.playCommand.addTarget { [weak self] _ in
+                self?.handlePlay()
+                return .success
+            }
+
+            // Pause command
+            commandCenter.pauseCommand.addTarget { [weak self] _ in
+                self?.handlePause()
+                return .success
+            }
+
+            // Toggle play/pause (space bar, headphones button)
+            commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
+                self?.handleToggle()
+                return .success
+            }
+
+            // Next track (skip forward)
+            commandCenter.nextTrackCommand.addTarget { [weak self] _ in
+                self?.handleNext()
+                return .success
+            }
+
+            // Previous track (skip backward)
+            commandCenter.previousTrackCommand.addTarget { [weak self] _ in
+                self?.handlePrevious()
+                return .success
+            }
+        }
+
+        // Enable all supported commands
         commandCenter.playCommand.isEnabled = true
-        commandCenter.playCommand.addTarget { [weak self] _ in
-            self?.handlePlay()
-            return .success
-        }
-
-        // Pause command
         commandCenter.pauseCommand.isEnabled = true
-        commandCenter.pauseCommand.addTarget { [weak self] _ in
-            self?.handlePause()
-            return .success
-        }
-
-        // Toggle play/pause (space bar, headphones button)
         commandCenter.togglePlayPauseCommand.isEnabled = true
-        commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
-            self?.handleToggle()
-            return .success
-        }
-
-        // Next track (skip forward)
         commandCenter.nextTrackCommand.isEnabled = true
-        commandCenter.nextTrackCommand.addTarget { [weak self] _ in
-            self?.handleNext()
-            return .success
-        }
-
-        // Previous track (skip backward)
         commandCenter.previousTrackCommand.isEnabled = true
-        commandCenter.previousTrackCommand.addTarget { [weak self] _ in
-            self?.handlePrevious()
-            return .success
-        }
 
         // Disable commands we don't support
         commandCenter.seekForwardCommand.isEnabled = false

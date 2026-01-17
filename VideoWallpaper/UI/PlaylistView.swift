@@ -16,6 +16,7 @@ struct PlaylistView: View {
 
     /// Available screens
     @State private var availableScreens: [String] = []
+    @State private var screenDisplayNames: [String: String] = [:]  // stableId -> localizedName
 
     /// Currently selected screen for playlist editing
     @State private var selectedScreenId: String = "default"
@@ -64,7 +65,7 @@ struct PlaylistView: View {
                     HStack(spacing: 4) {
                         ForEach(availableScreens, id: \.self) { screenId in
                             MonitorTabButton(
-                                title: screenId == "default" ? "Default" : screenId,
+                                title: screenDisplayNames[screenId] ?? screenId,
                                 systemImage: screenId == "default" ? "star.fill" : "display",
                                 isSelected: selectedScreenId == screenId,
                                 hasVideos: PlaylistPersistence.forScreen(screenId).items.count > 0
@@ -260,13 +261,17 @@ struct PlaylistView: View {
 
     private func loadAvailableScreens() {
         var screens = ["default"]
+        var displayNames: [String: String] = ["default": "Default"]
+
         for screen in NSScreen.screens {
-            let name = screen.localizedName
-            if !screens.contains(name) {
-                screens.append(name)
+            let stableId = screen.stableId
+            if !screens.contains(stableId) {
+                screens.append(stableId)
+                displayNames[stableId] = screen.localizedName
             }
         }
         availableScreens = screens
+        screenDisplayNames = displayNames
 
         // If selected screen no longer exists, reset to default
         if !availableScreens.contains(selectedScreenId) {

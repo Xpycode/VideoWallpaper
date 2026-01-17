@@ -47,11 +47,12 @@ class DesktopWindowController: NSWindowController {
         self.screenName = screen.localizedName
 
         // Use shared manager if provided, otherwise create own with screen-specific playlist
+        // Note: We use stableId (based on displayID) for persistence to avoid locale changes breaking playlists
         if let shared = sharedPlayerManager {
             self.playerManager = shared
             self.ownsPlayerManager = false
         } else {
-            self.playerManager = VideoPlayerManager(screenId: screen.localizedName)
+            self.playerManager = VideoPlayerManager(screenId: screen.stableId)
             self.ownsPlayerManager = true
         }
 

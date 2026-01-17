@@ -41,7 +41,7 @@ private struct NowPlayingContent: View {
 
     /// The name of the currently active playlist, if any
     private var activePlaylistName: String? {
-        PlaylistPersistence.shared.assignedPlaylist?.name
+        manager.activePlaylist?.name
     }
 
     var body: some View {

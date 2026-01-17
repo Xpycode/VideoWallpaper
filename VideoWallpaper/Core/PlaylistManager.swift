@@ -41,7 +41,7 @@ class PlaylistManager {
         return persistence.shuffleEnabled
     }
 
-    private var loopEnabled: Bool {
+    var loopEnabled: Bool {
         // Use named playlist's loop setting if assigned
         if let playlist = activeNamedPlaylist {
             return playlist.loopEnabled

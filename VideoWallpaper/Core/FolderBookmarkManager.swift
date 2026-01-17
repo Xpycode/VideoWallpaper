@@ -234,6 +234,12 @@ class FolderBookmarkManager: ObservableObject {
         return allVideos
     }
 
+    /// Loads video URLs from a specific folder
+    func loadVideoURLs(from folderURL: URL) -> [URL] {
+        let recursive = UserDefaults.standard.bool(forKey: Self.recursiveScanKey)
+        return getVideoURLs(from: folderURL, recursive: recursive)
+    }
+
     /// Gets video URLs from a single folder
     private func getVideoURLs(from folderURL: URL, recursive: Bool) -> [URL] {
         let fileManager = FileManager.default

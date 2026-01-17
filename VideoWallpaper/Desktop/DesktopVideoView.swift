@@ -9,6 +9,7 @@
 
 import AppKit
 import AVFoundation
+import Combine
 
 /// An NSView that displays video using AVPlayerLayer with support for cross-fade transitions.
 class DesktopVideoView: NSView {
@@ -20,6 +21,9 @@ class DesktopVideoView: NSView {
 
     /// Which player layer is currently active (true = A, false = B)
     private var isPlayerAActive = true
+
+    /// Observer for video scaling preference changes
+    private var scalingObserver: AnyCancellable?
 
     // MARK: - Initialization
 
@@ -35,7 +39,24 @@ class DesktopVideoView: NSView {
 
     private func setupView() {
         wantsLayer = true
+        layer?.isOpaque = true
         layer?.backgroundColor = CGColor.black
+        setupScalingObserver()
+    }
+
+    deinit {
+        scalingObserver?.cancel()
+    }
+
+    /// Observe changes to the videoScaling preference and update layers in real-time
+    private func setupScalingObserver() {
+        scalingObserver = UserDefaults.standard.publisher(for: \.videoScaling)
+            .dropFirst() // Skip initial value (already applied in setPlayers)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] newValue in
+                let scaling = VideoScaling(rawValue: newValue) ?? .fill
+                self?.updateVideoScaling(scaling)
+            }
     }
 
     // MARK: - Layer Setup
@@ -58,6 +79,7 @@ class DesktopVideoView: NSView {
         for playerLayer in [layerA, layerB] {
             playerLayer.frame = bounds
             playerLayer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+            playerLayer.isOpaque = true
             playerLayer.backgroundColor = CGColor.black
 
             // Apply current scaling setting
@@ -141,10 +163,17 @@ class DesktopVideoView: NSView {
     }
 }
 
-// MARK: - Helper Extension
+// MARK: - Helper Extensions
 
 private extension Double {
     func clamped(to range: ClosedRange<Double>) -> Double {
         return min(max(self, range.lowerBound), range.upperBound)
+    }
+}
+
+// KVO-compatible key path for videoScaling preference
+extension UserDefaults {
+    @objc dynamic var videoScaling: Int {
+        return integer(forKey: "videoScaling")
     }
 }

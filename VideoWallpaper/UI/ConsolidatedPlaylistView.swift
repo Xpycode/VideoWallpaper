@@ -24,6 +24,7 @@ struct ConsolidatedPlaylistView: View {
     /// Selected screen when sync mode is off
     @State private var selectedScreenId: String = "default"
     @State private var availableScreens: [String] = []
+    @State private var screenDisplayNames: [String: String] = [:]  // stableId -> localizedName
 
     /// UI State
     @State private var isCreatingPlaylist = false
@@ -149,7 +150,7 @@ struct ConsolidatedPlaylistView: View {
                 HStack(spacing: 4) {
                     ForEach(availableScreens, id: \.self) { screenId in
                         MonitorTabButton(
-                            title: screenId == "default" ? "Default" : screenId,
+                            title: screenDisplayNames[screenId] ?? screenId,
                             systemImage: screenId == "default" ? "star.fill" : "display",
                             isSelected: selectedScreenId == screenId,
                             hasVideos: true
@@ -234,6 +235,30 @@ struct ConsolidatedPlaylistView: View {
                 .textFieldStyle(.roundedBorder)
                 .frame(maxWidth: 150)
 
+            // Add videos menu
+            if let playlist = selectedPlaylist {
+                Menu {
+                    Button("All Folders") {
+                        addVideosFromFolders(to: playlist)
+                    }
+
+                    if !folderManager.folderURLs.isEmpty {
+                        Divider()
+
+                        ForEach(folderManager.folderURLs, id: \.self) { folderURL in
+                            Button(folderURL.lastPathComponent) {
+                                addVideosFromFolder(folderURL, to: playlist)
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .menuStyle(.borderlessButton)
+                .frame(width: 30)
+                .help("Add videos from Video Folders")
+            }
+
             // Actions menu
             if let playlist = selectedPlaylist {
                 Menu {
@@ -263,6 +288,12 @@ struct ConsolidatedPlaylistView: View {
                     }
                     Button("Exclude All") {
                         excludeAllInPlaylist()
+                    }
+
+                    Divider()
+
+                    Button("Clear All", role: .destructive) {
+                        clearPlaylist()
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -462,13 +493,17 @@ struct ConsolidatedPlaylistView: View {
 
     private func loadAvailableScreens() {
         var screens = ["default"]
+        var displayNames: [String: String] = ["default": "Default"]
+
         for screen in NSScreen.screens {
-            let name = screen.localizedName
-            if !screens.contains(name) {
-                screens.append(name)
+            let stableId = screen.stableId
+            if !screens.contains(stableId) {
+                screens.append(stableId)
+                displayNames[stableId] = screen.localizedName
             }
         }
         availableScreens = screens
+        screenDisplayNames = displayNames
 
         if !availableScreens.contains(selectedScreenId) {
             selectedScreenId = "default"
@@ -511,6 +546,13 @@ struct ConsolidatedPlaylistView: View {
         refreshTrigger = UUID()
     }
 
+    private func clearPlaylist() {
+        guard var playlist = selectedPlaylist else { return }
+        playlist.items.removeAll()
+        library.updatePlaylist(playlist)
+        refreshTrigger = UUID()
+    }
+
     private func moveItems(from source: IndexSet, to destination: Int) {
         guard var playlist = selectedPlaylist else { return }
         playlist.items.move(fromOffsets: source, toOffset: destination)
@@ -549,12 +591,33 @@ struct ConsolidatedPlaylistView: View {
         library.updatePlaylist(updated)
         refreshTrigger = UUID()
     }
-}
 
-// MARK: - Notification Names
+    private func addVideosFromFolders(to playlist: NamedPlaylist) {
+        folderManager.loadBookmarks()
+        let urls = folderManager.loadAllVideoURLs()
 
-extension Notification.Name {
-    static let playlistDidChange = Notification.Name("playlistDidChange")
+        guard !urls.isEmpty else { return }
+
+        // Create playlist items from URLs
+        let newItems = urls.map { PlaylistItem(url: $0) }
+
+        // Add to playlist (library filters duplicates)
+        library.addVideos(newItems, to: playlist.id)
+        refreshTrigger = UUID()
+    }
+
+    private func addVideosFromFolder(_ folderURL: URL, to playlist: NamedPlaylist) {
+        let urls = folderManager.loadVideoURLs(from: folderURL)
+
+        guard !urls.isEmpty else { return }
+
+        // Create playlist items from URLs
+        let newItems = urls.map { PlaylistItem(url: $0) }
+
+        // Add to playlist (library filters duplicates)
+        library.addVideos(newItems, to: playlist.id)
+        refreshTrigger = UUID()
+    }
 }
 
 // MARK: - Monitor Tab Button (reused from PlaylistView)
@@ -670,6 +733,19 @@ private struct PlaylistVideoRowView: View {
         }
         .padding(.vertical, 4)
         .opacity(item.isExcluded ? 0.6 : 1.0)
+        .onAppear {
+            loadMetadataIfNeeded()
+        }
+    }
+
+    private func loadMetadataIfNeeded() {
+        guard !item.hasMetadata, let url = item.url else { return }
+        VideoMetadataLoader.shared.loadMetadata(
+            for: url,
+            itemId: item.id,
+            playlistId: playlist.id,
+            library: PlaylistLibrary.shared
+        )
     }
 
     private func loadThumbnail() {

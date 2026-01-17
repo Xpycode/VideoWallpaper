@@ -92,4 +92,11 @@ extension NSScreen {
         }
         return CGDirectDisplayID(screenNumber.uint32Value)
     }
+
+    /// Returns a stable identifier for this screen suitable for persistence.
+    /// Uses the numeric displayID which is stable across app launches and locale changes.
+    /// Falls back to "0" if displayID is unavailable (should never happen in practice).
+    var stableId: String {
+        String(displayID ?? 0)
+    }
 }

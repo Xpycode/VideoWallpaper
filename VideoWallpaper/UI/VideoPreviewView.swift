@@ -89,15 +89,19 @@ class VideoPreviewNSView: NSView {
         // Set initial active state
         updateActivePlayer(activePlayer)
 
-        // Listen for player transitions
+        // Listen for player transitions - only respond to our own players
         transitionObserver = NotificationCenter.default.addObserver(
             forName: .videoPlayerDidTransition,
             object: nil,
             queue: .main
         ) { [weak self] notification in
-            if let newPlayer = notification.userInfo?["newPlayer"] as? AVPlayer {
-                self?.updateActivePlayer(newPlayer)
-            }
+            guard let self = self,
+                  let newPlayer = notification.userInfo?["newPlayer"] as? AVPlayer else { return }
+
+            // Only respond if this notification is for one of our players
+            guard newPlayer === self.playerA || newPlayer === self.playerB else { return }
+
+            self.updateActivePlayer(newPlayer)
         }
     }
 

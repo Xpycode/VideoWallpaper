@@ -12,6 +12,7 @@ import AVFoundation
 import AppKit
 
 /// Generates and caches video thumbnails
+@MainActor
 final class ThumbnailCache: ObservableObject {
     static let shared = ThumbnailCache()
 
@@ -90,14 +91,10 @@ final class ThumbnailCache: ObservableObject {
 
             if let image = image {
                 self.cache.setObject(image, forKey: url as NSURL)
-                _ = await MainActor.run {
-                    self.cachedURLs.insert(url)
-                }
+                self.cachedURLs.insert(url)
             }
 
-            _ = await MainActor.run {
-                completion(image)
-            }
+            completion(image)
         }
     }
 
@@ -131,9 +128,7 @@ final class ThumbnailCache: ObservableObject {
 
             // Cache it
             cache.setObject(nsImage, forKey: url as NSURL)
-            _ = await MainActor.run {
-                cachedURLs.insert(url)
-            }
+            cachedURLs.insert(url)
 
             return nsImage
 
@@ -146,8 +141,6 @@ final class ThumbnailCache: ObservableObject {
     /// Clear all cached thumbnails
     func clearCache() {
         cache.removeAllObjects()
-        DispatchQueue.main.async {
-            self.cachedURLs.removeAll()
-        }
+        cachedURLs.removeAll()
     }
 }

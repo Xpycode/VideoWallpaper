@@ -50,6 +50,7 @@ class PlaylistLibrary: ObservableObject {
         updated.modifiedDate = Date()
         playlists[index] = updated
         savePlaylists()
+        NotificationCenter.default.post(name: .playlistDidChange, object: self)
     }
 
     /// Delete a playlist by ID.
@@ -99,6 +100,7 @@ class PlaylistLibrary: ObservableObject {
         playlists[index].items.append(contentsOf: newItems)
         playlists[index].modifiedDate = Date()
         savePlaylists()
+        NotificationCenter.default.post(name: .playlistDidChange, object: self)
     }
 
     /// Remove a video from a playlist.
@@ -107,6 +109,7 @@ class PlaylistLibrary: ObservableObject {
         playlists[index].items.removeAll { $0.id == itemId }
         playlists[index].modifiedDate = Date()
         savePlaylists()
+        NotificationCenter.default.post(name: .playlistDidChange, object: self)
     }
 
     /// Toggle exclusion status of a video in a playlist.
@@ -117,6 +120,7 @@ class PlaylistLibrary: ObservableObject {
         playlists[playlistIndex].items[itemIndex].isExcluded.toggle()
         playlists[playlistIndex].modifiedDate = Date()
         savePlaylists()
+        NotificationCenter.default.post(name: .playlistDidChange, object: self)
     }
 
     // MARK: - Persistence
@@ -179,4 +183,12 @@ class PlaylistLibrary: ObservableObject {
             print("PlaylistLibrary: Migrated \(allItems.count) videos to Default playlist")
         }
     }
+}
+
+// MARK: - Notification Names
+
+extension Notification.Name {
+    /// Posted when the active playlist or its contents change.
+    /// Observers should reload their playlist data.
+    static let playlistDidChange = Notification.Name("playlistDidChange")
 }
