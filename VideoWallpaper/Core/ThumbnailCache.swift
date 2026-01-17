@@ -23,10 +23,8 @@ final class ThumbnailCache: ObservableObject {
     @Published private(set) var cachedURLs = Set<URL>()
 
     /// URLs currently being generated (to avoid duplicate work)
+    /// Access is thread-safe via @MainActor on the class
     private var generatingURLs = Set<URL>()
-
-    /// Queue for thread-safe access
-    private let queue = DispatchQueue(label: "com.videowallpaper.thumbnailcache")
 
     /// Number of cached thumbnails
     var cacheCount: Int {
@@ -63,31 +61,25 @@ final class ThumbnailCache: ObservableObject {
             return
         }
 
-        // Check if already generating
-        var shouldGenerate = false
-        queue.sync {
-            if !generatingURLs.contains(url) {
-                generatingURLs.insert(url)
-                shouldGenerate = true
-            }
-        }
-
-        guard shouldGenerate else {
+        // Check if already generating (thread-safe via @MainActor)
+        guard !generatingURLs.contains(url) else {
             // Already generating, wait a bit and check cache
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
                 completion(self?.cache.object(forKey: url as NSURL))
             }
             return
         }
 
-        Task { [weak self] in
+        generatingURLs.insert(url)
+
+        Task { @MainActor [weak self] in
             guard let self = self else { return }
 
             let image = await self.generateThumbnailAsync(for: url)
 
-            self.queue.sync {
-                _ = self.generatingURLs.remove(url)
-            }
+            // Clean up generating set
+            self.generatingURLs.remove(url)
 
             if let image = image {
                 self.cache.setObject(image, forKey: url as NSURL)

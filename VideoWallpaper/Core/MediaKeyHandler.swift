@@ -11,6 +11,7 @@ import Foundation
 import MediaPlayer
 
 /// Manages Now Playing info center and media remote commands.
+@MainActor
 class MediaKeyHandler {
 
     static let shared = MediaKeyHandler()
@@ -101,39 +102,29 @@ class MediaKeyHandler {
     }
 
     private func handlePlay() {
-        DispatchQueue.main.async {
-            AppDelegate.shared?.startPlayback()
-            self.updatePlaybackState(isPlaying: true)
-        }
+        AppDelegate.shared?.startPlayback()
+        updatePlaybackState(isPlaying: true)
     }
 
     private func handlePause() {
-        DispatchQueue.main.async {
-            AppDelegate.shared?.pausePlayback()
-            self.updatePlaybackState(isPlaying: false)
-        }
+        AppDelegate.shared?.pausePlayback()
+        updatePlaybackState(isPlaying: false)
     }
 
     private func handleToggle() {
-        DispatchQueue.main.async {
-            AppDelegate.shared?.togglePlayback()
-            let isPlaying = AppDelegate.shared?.isPlaying ?? false
-            self.updatePlaybackState(isPlaying: isPlaying)
-        }
+        AppDelegate.shared?.togglePlayback()
+        let isPlaying = AppDelegate.shared?.isPlaying ?? false
+        updatePlaybackState(isPlaying: isPlaying)
     }
 
     private func handleNext() {
-        DispatchQueue.main.async {
-            AppDelegate.shared?.nextVideo()
-            self.updateNowPlayingInfo()
-        }
+        AppDelegate.shared?.nextVideo()
+        updateNowPlayingInfo()
     }
 
     private func handlePrevious() {
-        DispatchQueue.main.async {
-            AppDelegate.shared?.previousVideo()
-            self.updateNowPlayingInfo()
-        }
+        AppDelegate.shared?.previousVideo()
+        updateNowPlayingInfo()
     }
 
     // MARK: - Now Playing Info
@@ -165,6 +156,7 @@ class MediaKeyHandler {
     }
 
     /// Update just the playback state (more efficient than full update)
+    @MainActor
     func updatePlaybackState(isPlaying: Bool) {
         guard isEnabled else { return }
 

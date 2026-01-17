@@ -1,16 +1,28 @@
 import Foundation
 import AVFoundation
 
+/// Actor to track which URLs are currently being loaded (thread-safe)
+private actor MetadataLoadingState {
+    private var loadingURLs = Set<URL>()
+
+    func shouldLoad(_ url: URL) -> Bool {
+        guard !loadingURLs.contains(url) else { return false }
+        loadingURLs.insert(url)
+        return true
+    }
+
+    func finishedLoading(_ url: URL) {
+        loadingURLs.remove(url)
+    }
+}
+
 /// Loads video metadata (duration, resolution) asynchronously
 final class VideoMetadataLoader: ObservableObject {
     static let shared = VideoMetadataLoader()
-    
-    /// Set of URLs currently being loaded
-    private var loadingURLs = Set<URL>()
-    
-    /// Queue for thread-safe access to loadingURLs
-    private let queue = DispatchQueue(label: "com.videowallpaper.metadataloader")
-    
+
+    /// Actor for thread-safe tracking of loading URLs
+    private let loadingState = MetadataLoadingState()
+
     private init() {}
     
     /// Load metadata for all items that don't have it yet
@@ -25,46 +37,33 @@ final class VideoMetadataLoader: ObservableObject {
     
     /// Load metadata for a single video URL
     func loadMetadata(for url: URL, itemId: UUID, persistence: PlaylistPersistence) {
-        // Check if already loading
-        var shouldLoad = false
-        queue.sync {
-            if !loadingURLs.contains(url) {
-                loadingURLs.insert(url)
-                shouldLoad = true
-            }
-        }
-        
-        guard shouldLoad else { return }
-        
         Task {
-            defer {
-                queue.sync {
-                    _ = loadingURLs.remove(url)
-                }
-            }
-            
+            // Check if already loading using actor for thread safety
+            guard await loadingState.shouldLoad(url) else { return }
+            defer { Task { await loadingState.finishedLoading(url) } }
+
             let asset = AVURLAsset(url: url)
-            
+
             do {
                 // Load duration
                 let duration = try await asset.load(.duration)
                 let durationSeconds = CMTimeGetSeconds(duration)
-                
+
                 // Load video track for resolution
                 let tracks = try await asset.loadTracks(withMediaType: .video)
                 guard let videoTrack = tracks.first else {
                     print("VideoMetadataLoader: No video track for \(url.lastPathComponent)")
                     return
                 }
-                
+
                 let naturalSize = try await videoTrack.load(.naturalSize)
                 let transform = try await videoTrack.load(.preferredTransform)
-                
+
                 // Apply transform to get actual dimensions (handles rotated videos)
                 let transformedSize = naturalSize.applying(transform)
                 let width = Int(abs(transformedSize.width))
                 let height = Int(abs(transformedSize.height))
-                
+
                 // Update the item on main thread
                 await MainActor.run {
                     persistence.updateMetadata(
@@ -74,7 +73,7 @@ final class VideoMetadataLoader: ObservableObject {
                         height: height
                     )
                 }
-                
+
             } catch {
                 print("VideoMetadataLoader: Failed to load metadata for \(url.lastPathComponent): \(error.localizedDescription)")
             }
@@ -95,23 +94,10 @@ final class VideoMetadataLoader: ObservableObject {
 
     /// Load metadata for a single video URL in a named playlist
     func loadMetadata(for url: URL, itemId: UUID, playlistId: UUID, library: PlaylistLibrary) {
-        // Check if already loading
-        var shouldLoad = false
-        queue.sync {
-            if !loadingURLs.contains(url) {
-                loadingURLs.insert(url)
-                shouldLoad = true
-            }
-        }
-
-        guard shouldLoad else { return }
-
         Task {
-            defer {
-                queue.sync {
-                    _ = loadingURLs.remove(url)
-                }
-            }
+            // Check if already loading using actor for thread safety
+            guard await loadingState.shouldLoad(url) else { return }
+            defer { Task { await loadingState.finishedLoading(url) } }
 
             let asset = AVURLAsset(url: url)
 

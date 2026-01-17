@@ -18,6 +18,7 @@ class SupportInfoExporter {
     private init() {}
 
     /// Generates a support info string with system and app diagnostics.
+    @MainActor
     func generateSupportInfo() -> String {
         var info: [String] = []
 
@@ -67,7 +68,7 @@ class SupportInfoExporter {
 
         // Video Folders
         info.append("--- Video Folders ---")
-        if let bookmarks = defaults.dictionary(forKey: "videoFoldersBookmarks") {
+        if let bookmarks = defaults.array(forKey: "videoFoldersBookmarks") as? [Data] {
             info.append("Configured folders: \(bookmarks.count)")
         } else {
             info.append("Configured folders: 0")
@@ -99,6 +100,7 @@ class SupportInfoExporter {
     }
 
     /// Shows a share sheet to export the support info.
+    @MainActor
     func exportSupportInfo(from view: NSView? = nil) {
         let info = generateSupportInfo()
 
@@ -127,6 +129,7 @@ class SupportInfoExporter {
     }
 
     /// Copies support info to clipboard.
+    @MainActor
     func copyToClipboard() {
         let info = generateSupportInfo()
         NSPasteboard.general.clearContents()

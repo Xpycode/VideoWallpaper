@@ -11,6 +11,7 @@ import AppKit
 import SwiftUI
 
 /// Manages the floating quick controls panel.
+@MainActor
 class QuickControlsWindowController {
 
     static let shared = QuickControlsWindowController()
@@ -83,9 +84,10 @@ class QuickControlsWindowController {
         panel.isMovableByWindowBackground = true
         panel.hidesOnDeactivate = false
 
-        // Set SwiftUI content
+        // Set SwiftUI content - safely unwrap AppDelegate.shared
+        guard let appDelegate = AppDelegate.shared else { return }
         let contentView = QuickControlsPanel()
-            .environmentObject(AppDelegate.shared!)
+            .environmentObject(appDelegate)
 
         panel.contentView = NSHostingView(rootView: contentView)
 

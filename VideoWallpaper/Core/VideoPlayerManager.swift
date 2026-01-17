@@ -61,6 +61,7 @@ class VideoPlayerManager: ObservableObject {
     private var statusObservation: NSKeyValueObservation?
     private var endOfVideoObserver: NSObjectProtocol?
     private var playbackFailedObserver: NSObjectProtocol?
+    private var settingsObserver: NSObjectProtocol?
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Settings
@@ -126,8 +127,8 @@ class VideoPlayerManager: ObservableObject {
     }
 
     private func setupSettingsObservers() {
-        // Observe settings changes
-        NotificationCenter.default.addObserver(
+        // Observe settings changes - store token for cleanup in deinit
+        settingsObserver = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
             object: nil,
             queue: .main
@@ -151,6 +152,10 @@ class VideoPlayerManager: ObservableObject {
     }
 
     deinit {
+        // Remove settings observer to prevent memory leak
+        if let observer = settingsObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
         stop()
     }
 
@@ -409,9 +414,12 @@ class VideoPlayerManager: ObservableObject {
         guard duration.isNumeric && !duration.isIndefinite else { return }
 
         let durationSeconds = CMTimeGetSeconds(duration)
-        let boundaryTime = durationSeconds - transitionDuration
 
-        guard boundaryTime > 2.0 else { return }  // Need at least 2s of content
+        // Video must be long enough to have content before transition starts
+        // Need at least transitionDuration + 1 second of actual content
+        guard durationSeconds > (transitionDuration + 1.0) else { return }
+
+        let boundaryTime = durationSeconds - transitionDuration
 
         let time = CMTime(seconds: boundaryTime, preferredTimescale: duration.timescale)
         timeObserverToken = activePlayer.addBoundaryTimeObserver(

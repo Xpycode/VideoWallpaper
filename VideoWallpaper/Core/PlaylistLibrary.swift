@@ -24,14 +24,22 @@ class PlaylistLibrary: ObservableObject {
 
     private let userDefaultsKey = "playlistLibrary"
 
+    // MARK: - Private Properties
+
+    /// Observer token for folder changes notification
+    private var folderObserver: NSObjectProtocol?
+
+    /// Guard against concurrent sync operations
+    private var isSyncing = false
+
     // MARK: - Initialization
 
     private init() {
         loadPlaylists()
         migrateIfNeeded()
 
-        // Observe folder changes to sync Default playlist
-        NotificationCenter.default.addObserver(
+        // Observe folder changes to sync Default playlist - store token for cleanup
+        folderObserver = NotificationCenter.default.addObserver(
             forName: .videoFoldersDidChange,
             object: nil,
             queue: .main
@@ -41,6 +49,13 @@ class PlaylistLibrary: ObservableObject {
 
         // Initial sync if no playlists exist or Default needs updating
         syncFromVideoFolders()
+    }
+
+    deinit {
+        // Remove observer to prevent memory leak (though singleton rarely deinits)
+        if let observer = folderObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     // MARK: - CRUD Operations
@@ -68,7 +83,12 @@ class PlaylistLibrary: ObservableObject {
     /// Delete a playlist by ID.
     func deletePlaylist(id: UUID) {
         playlists.removeAll { $0.id == id }
+
+        // Clear this playlist ID from any monitors that have it assigned
+        PlaylistPersistence.clearAssignedPlaylist(id)
+
         savePlaylists()
+        NotificationCenter.default.post(name: .playlistDidChange, object: self)
     }
 
     /// Duplicate an existing playlist with a new name.
@@ -92,6 +112,7 @@ class PlaylistLibrary: ObservableObject {
         playlists[index].name = newName
         playlists[index].modifiedDate = Date()
         savePlaylists()
+        NotificationCenter.default.post(name: .playlistDidChange, object: self)
     }
 
     /// Get a playlist by ID.
@@ -202,6 +223,10 @@ class PlaylistLibrary: ObservableObject {
     /// Creates the Default playlist if it doesn't exist.
     /// Runs folder scanning on a background queue to avoid blocking the UI.
     func syncFromVideoFolders() {
+        // Guard against concurrent sync operations
+        guard !isSyncing else { return }
+        isSyncing = true
+
         // Run folder scanning on background queue
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             let folderManager = FolderBookmarkManager()
@@ -213,6 +238,7 @@ class PlaylistLibrary: ObservableObject {
 
             // Update on main queue
             DispatchQueue.main.async {
+                defer { self?.isSyncing = false }
                 self?.updateDefaultPlaylist(with: items)
             }
         }

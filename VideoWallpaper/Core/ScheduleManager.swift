@@ -133,6 +133,9 @@ class ScheduleManager: ObservableObject {
     // MARK: - Monitoring
 
     func startMonitoring() {
+        // Clean up any existing timer first to prevent duplicates
+        stopMonitoring()
+
         // Check immediately
         checkSchedule()
 

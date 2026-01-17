@@ -14,6 +14,7 @@ import Combine
 
 /// Manages global keyboard shortcuts for video wallpaper control.
 /// Uses NSEvent global monitor for system-wide hotkey detection.
+@MainActor
 class HotkeyManager: ObservableObject {
 
     // MARK: - Singleton
@@ -125,7 +126,7 @@ class HotkeyManager: ObservableObject {
         isInitialized = true
         // Defer monitoring start to avoid blocking during singleton init
         if isEnabled && hasAccessibilityPermission {
-            DispatchQueue.main.async { [weak self] in
+            Task { @MainActor [weak self] in
                 self?.startMonitoring()
             }
         }
@@ -161,7 +162,11 @@ class HotkeyManager: ObservableObject {
     }
 
     deinit {
-        stopMonitoring()
+        // Synchronously clean up the monitor on deinit
+        if let monitor = globalMonitor {
+            NSEvent.removeMonitor(monitor)
+            globalMonitor = nil
+        }
     }
 
     // MARK: - Hotkey Management
@@ -239,26 +244,25 @@ class HotkeyManager: ObservableObject {
     }
 
     private func performAction(_ action: HotkeyAction) {
-        DispatchQueue.main.async {
-            guard let appDelegate = AppDelegate.shared else { return }
+        // Already on MainActor due to class annotation
+        guard let appDelegate = AppDelegate.shared else { return }
 
-            switch action {
-            case .playPause:
-                appDelegate.togglePlayback()
-            case .nextVideo:
-                appDelegate.nextVideo()
-            case .previousVideo:
-                appDelegate.previousVideo()
-            case .muteToggle:
-                let currentMuted = UserDefaults.standard.object(forKey: "audioMuted") as? Bool ?? true
-                UserDefaults.standard.set(!currentMuted, forKey: "audioMuted")
-            }
+        switch action {
+        case .playPause:
+            appDelegate.togglePlayback()
+        case .nextVideo:
+            appDelegate.nextVideo()
+        case .previousVideo:
+            appDelegate.previousVideo()
+        case .muteToggle:
+            let currentMuted = UserDefaults.standard.object(forKey: "audioMuted") as? Bool ?? true
+            UserDefaults.standard.set(!currentMuted, forKey: "audioMuted")
         }
     }
     
     // MARK: - Key Code Conversion
 
-    static func keyCodeToString(_ keyCode: UInt16) -> String {
+    nonisolated static func keyCodeToString(_ keyCode: UInt16) -> String {
         switch keyCode {
         // Letters
         case 0: return "A"

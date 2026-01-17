@@ -143,8 +143,7 @@ class FolderBookmarkManager: ObservableObject {
             var bookmarks = UserDefaults.standard.array(forKey: Self.bookmarksKey) as? [Data] ?? []
             bookmarks.append(bookmarkData)
             UserDefaults.standard.set(bookmarks, forKey: Self.bookmarksKey)
-            UserDefaults.standard.synchronize()
-
+            
             os_log(.info, log: log, "Saved bookmark for folder: %{public}@", url.path)
 
             // Start accessing and add to list
@@ -175,8 +174,7 @@ class FolderBookmarkManager: ObservableObject {
                 var bookmarks = UserDefaults.standard.array(forKey: Self.bookmarksKey) as? [Data] ?? []
                 bookmarks.append(bookmarkData)
                 UserDefaults.standard.set(bookmarks, forKey: Self.bookmarksKey)
-                UserDefaults.standard.synchronize()
-
+                
                 folderURLs.append(url)
                 os_log(.info, log: log, "Added folder with regular bookmark: %{public}@", url.path)
                 return true

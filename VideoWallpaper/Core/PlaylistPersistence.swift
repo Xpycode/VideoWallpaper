@@ -152,6 +152,22 @@ class PlaylistPersistence: ObservableObject {
         defer { instancesLock.unlock() }
         instances.removeAll()
     }
+
+    /// Clear a specific playlist ID from all monitors that have it assigned
+    static func clearAssignedPlaylist(_ id: UUID) {
+        instancesLock.lock()
+        defer { instancesLock.unlock() }
+
+        // Clear from all registered instances
+        for (_, instance) in instances where instance.assignedPlaylistId == id {
+            instance.assignedPlaylistId = nil
+        }
+
+        // Also clear from shared instance
+        if shared.assignedPlaylistId == id {
+            shared.assignedPlaylistId = nil
+        }
+    }
     
     // MARK: - Instance Properties
     
@@ -325,6 +341,12 @@ class PlaylistPersistence: ObservableObject {
     /// - Missing videos are removed
     /// - Existing videos preserve their excluded/order state
     func syncWithDiscoveredURLs(_ urls: [URL]) {
+        // Guard against wiping playlist on transient folder access failure
+        // If we have items but got empty URLs, likely a temporary access issue
+        guard !urls.isEmpty || items.isEmpty else {
+            return
+        }
+
         var updatedItems: [PlaylistItem] = []
         var existingLookup = Dictionary(uniqueKeysWithValues: items.map { ($0.lookupKey, $0) })
 

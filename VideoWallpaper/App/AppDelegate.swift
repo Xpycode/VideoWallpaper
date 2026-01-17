@@ -14,10 +14,11 @@ import Combine
 /// Supports two modes:
 /// - Independent mode: Each screen has its own VideoPlayerManager
 /// - Sync mode: All screens share a single VideoPlayerManager for frame-accurate sync
+@MainActor
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     /// Shared instance for access from SwiftUI views
-    static private(set) var shared: AppDelegate!
+    static private(set) weak var shared: AppDelegate?
 
     /// Desktop window controllers, one per screen
     private var desktopWindows: [DesktopWindowController] = []
@@ -29,16 +30,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     private let screenLockMonitor = ScreenLockMonitor.shared
 
     /// Media key handler for Now Playing integration
-    private let mediaKeyHandler = MediaKeyHandler.shared
+    private var mediaKeyHandler: MediaKeyHandler { MediaKeyHandler.shared }
 
     /// Sync manager for coordinated playback
-    private let syncManager = SyncManager.shared
+    private var syncManager: SyncManager { SyncManager.shared }
 
     /// Schedule manager for timed playback
-    private let scheduleManager = ScheduleManager.shared
+    private var scheduleManager: ScheduleManager { ScheduleManager.shared }
 
     /// Hotkey manager for global shortcuts
-    private let hotkeyManager = HotkeyManager.shared
+    private var hotkeyManager: HotkeyManager { HotkeyManager.shared }
 
     /// Cancellables for Combine subscriptions
     private var cancellables = Set<AnyCancellable>()
@@ -178,6 +179,36 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         }
 
         totalScreenCount = desktopWindows.count
+
+        // Observe player state changes to keep isPlaying in sync
+        observePlayerStates()
+    }
+
+    /// Observes player manager states to sync isPlaying when playback naturally ends
+    private func observePlayerStates() {
+        // Cancel existing observations
+        cancellables.removeAll()
+
+        // Set up power monitoring again (was also stored in cancellables)
+        setupPowerMonitoring()
+        setupScheduleMonitoring()
+
+        // Observe the primary player manager
+        if let playerManager = primaryPlayerManager {
+            playerManager.$isPlaying
+                .dropFirst() // Skip initial value
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] playerIsPlaying in
+                    guard let self = self else { return }
+                    // If player stopped but AppDelegate thinks we're playing, sync state
+                    if !playerIsPlaying && self.isPlaying {
+                        self.isPlaying = false
+                        self.playingScreenCount = 0
+                        self.mediaKeyHandler.updatePlaybackState(isPlaying: false)
+                    }
+                }
+                .store(in: &cancellables)
+        }
     }
 
     private func setupScreenChangeObserver() {
@@ -230,7 +261,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         createDesktopWindows()
 
         if wasPlaying {
-            startPlayback()
+            // Delay restart to let AVFoundation settle after screen changes
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.startPlayback()
+            }
         }
     }
 
@@ -401,7 +435,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             window.nextVideo()
         }
         // Update Now Playing after a short delay to let the new video load
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(500))
             self?.mediaKeyHandler.updateNowPlayingInfo()
         }
     }
@@ -412,7 +447,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             window.previousVideo()
         }
         // Update Now Playing after a short delay to let the new video load
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(500))
             self?.mediaKeyHandler.updateNowPlayingInfo()
         }
     }
