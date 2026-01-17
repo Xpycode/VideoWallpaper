@@ -164,6 +164,41 @@ private struct DisplayCard: View {
             }
 
             Spacer()
+
+            // Per-display playback controls
+            HStack(spacing: 16) {
+                Button {
+                    manager.previousVideo()
+                } label: {
+                    Image(systemName: "backward.fill")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+
+                Button {
+                    if manager.isPlaying {
+                        manager.pause()
+                    } else {
+                        manager.play()
+                    }
+                } label: {
+                    Image(systemName: manager.isPlaying ? "pause.fill" : "play.fill")
+                        .font(.title2)
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.primary)
+
+                Button {
+                    manager.nextVideo()
+                } label: {
+                    Image(systemName: "forward.fill")
+                        .font(.title3)
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.secondary)
+            }
+            .padding(.trailing, 8)
         }
         .padding(12)
         .background(Color(nsColor: .controlBackgroundColor))
