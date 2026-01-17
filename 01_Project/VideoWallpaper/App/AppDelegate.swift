@@ -199,7 +199,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         observePlayerStates()
     }
 
-    /// Observes player manager states to sync isPlaying when playback naturally ends
+    /// Observes player manager states to sync isPlaying with actual player states
     private func observePlayerStates() {
         // Cancel existing observations
         cancellables.removeAll()
@@ -208,22 +208,30 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         setupPowerMonitoring()
         setupScheduleMonitoring()
 
-        // Observe the primary player manager
-        if let playerManager = primaryPlayerManager {
-            playerManager.$isPlaying
+        // Observe all player managers to keep isPlaying in sync
+        let managers = allDisplayPlayerManagers.map { $0.manager }
+        for manager in managers {
+            manager.$isPlaying
                 .dropFirst() // Skip initial value
                 .receive(on: DispatchQueue.main)
-                .sink { [weak self] playerIsPlaying in
-                    guard let self = self else { return }
-                    // If player stopped but AppDelegate thinks we're playing, sync state
-                    if !playerIsPlaying && self.isPlaying {
-                        self.isPlaying = false
-                        self.playingScreenCount = 0
-                        self.mediaKeyHandler.updatePlaybackState(isPlaying: false)
-                    }
+                .sink { [weak self] _ in
+                    self?.syncPlayingState()
                 }
                 .store(in: &cancellables)
         }
+    }
+
+    /// Syncs isPlaying based on whether any display is currently playing
+    private func syncPlayingState() {
+        let managers = allDisplayPlayerManagers.map { $0.manager }
+        let anyPlaying = managers.contains { $0.isPlaying }
+        let playingCount = managers.filter { $0.isPlaying }.count
+
+        if anyPlaying != isPlaying {
+            isPlaying = anyPlaying
+            mediaKeyHandler.updatePlaybackState(isPlaying: anyPlaying)
+        }
+        playingScreenCount = playingCount
     }
 
     private func setupScreenChangeObserver() {

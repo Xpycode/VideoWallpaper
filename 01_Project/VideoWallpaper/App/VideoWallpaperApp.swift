@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import Sparkle
 
 @main
 struct VideoWallpaperApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("launchAtLogin") private var launchAtLogin = false
+
+    private let updateController = UpdateController()
 
     var body: some Scene {
         // Main window with sidebar navigation
@@ -24,6 +27,14 @@ struct VideoWallpaperApp: App {
         .commands {
             // Remove "New Window" from File menu since we only want one window
             CommandGroup(replacing: .newItem) { }
+
+            // Check for Updates in App menu
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates...") {
+                    updateController.checkForUpdates()
+                }
+                .disabled(!updateController.canCheckForUpdates)
+            }
 
             // Playback commands with keyboard shortcuts
             CommandMenu("Playback") {

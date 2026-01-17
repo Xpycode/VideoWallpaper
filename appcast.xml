@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Video Wallpaper Updates</title>
+        <link>https://github.com/Xpycode/VideoWallpaper/releases</link>
+        <description>Most recent changes with links to updates.</description>
+        <language>en</language>
+
+        <!--
+        RELEASE INSTRUCTIONS:
+        1. Build for release: Product → Archive in Xcode
+        2. Export notarized app, create DMG
+        3. Sign the DMG with the shared EdDSA key:
+           /Users/sim/Library/Developer/Xcode/DerivedData/VideoWallpaper-*/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update VideoWallpaper-vX.X.dmg
+        4. Copy the edSignature from output
+        5. Add new <item> below with version, signature, download URL
+        6. Get file size: ls -l VideoWallpaper-vX.X.dmg
+        7. Push appcast.xml to main branch
+        8. Create GitHub release with DMG attached
+        -->
+
+        <!-- Add new releases here (newest first) -->
+        <item>
+            <title>Version 1.0</title>
+            <pubDate>Sat, 17 Jan 2026 20:29:00 +0100</pubDate>
+            <description><![CDATA[
+                <h2>Initial Release</h2>
+                <ul>
+                    <li>Play videos as animated desktop wallpaper</li>
+                    <li>Multi-monitor support with per-display playlists</li>
+                    <li>Sync mode to play same video across all displays</li>
+                    <li>Menu bar controls for quick access</li>
+                    <li>Playlist management with shuffle and loop</li>
+                    <li>Smooth crossfade transitions between videos</li>
+                    <li>Pause on battery power option</li>
+                    <li>Launch at login support</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://github.com/Xpycode/VideoWallpaper/releases/download/v1.0/VideoWallpaper-v1.0.dmg"
+                sparkle:version="1"
+                sparkle:shortVersionString="1.0"
+                length="13715378"
+                type="application/octet-stream"
+                sparkle:edSignature="GBNs4gcqotnDmp/1+xVAv2gn459kkHw+9g+gZ9I/07cmBU95LXCotTz7SrFGP0L2H1s9IcahpoKHoYs3YMcVBQ=="
+            />
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+        </item>
+
+    </channel>
+</rss>

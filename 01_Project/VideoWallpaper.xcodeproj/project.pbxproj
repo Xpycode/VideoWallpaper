@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		230E6F882F1C16E10052B143 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 230E6F872F1C16E10052B143 /* Sparkle */; };
+		230E6F8A2F1C181E0052B143 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 230E6F892F1C181E0052B143 /* UpdateController.swift */; };
 		A1000001201C00000001 /* VideoWallpaperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000001 /* VideoWallpaperApp.swift */; };
 		A1000001201C00000002 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000002 /* AppDelegate.swift */; };
 		A1000001201C00000003 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000003 /* VideoPlayerManager.swift */; };
@@ -48,6 +50,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		230E6F892F1C181E0052B143 /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
 		A1000001001C00000001 /* VideoWallpaper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoWallpaper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000001101C00000001 /* VideoWallpaperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoWallpaperApp.swift; sourceTree = "<group>"; };
 		A1000001101C00000002 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				230E6F882F1C16E10052B143 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -199,6 +203,7 @@
 				A1000001101C00000035 /* AppVisibilityManager.swift */,
 				A1000001101C00000036 /* SupportInfoExporter.swift */,
 				A1000001101C00000040 /* ScreenLockMonitor.swift */,
+				230E6F892F1C181E0052B143 /* UpdateController.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -257,6 +262,9 @@
 				Base,
 			);
 			mainGroup = A1000001401C00000001;
+			packageReferences = (
+				230E6F862F1C16E10052B143 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			productRefGroup = A1000001401C00000003 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -286,6 +294,7 @@
 				A1000001201C00000002 /* AppDelegate.swift in Sources */,
 				A1000001201C00000003 /* VideoPlayerManager.swift in Sources */,
 				A1000001201C00000004 /* FolderBookmarkManager.swift in Sources */,
+				230E6F8A2F1C181E0052B143 /* UpdateController.swift in Sources */,
 				A1000001201C00000005 /* PlaylistManager.swift in Sources */,
 				A1000001201C00000006 /* DesktopWindowController.swift in Sources */,
 				A1000001201C00000007 /* DesktopVideoView.swift in Sources */,
@@ -455,7 +464,7 @@
 				CODE_SIGN_ENTITLEMENTS = VideoWallpaper/Resources/VideoWallpaper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_FILE_ACCESS_MOVIES_FOLDER = readonly;
@@ -499,7 +508,7 @@
 				CODE_SIGN_ENTITLEMENTS = VideoWallpaper/Resources/VideoWallpaper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_FILE_ACCESS_MOVIES_FOLDER = readonly;
@@ -557,6 +566,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		230E6F862F1C16E10052B143 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		230E6F872F1C16E10052B143 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 230E6F862F1C16E10052B143 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A1000001701C00000001 /* Project object */;
 }
