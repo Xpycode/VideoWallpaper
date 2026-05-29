@@ -310,6 +310,7 @@ private struct VideoRowView: View {
     let persistence: PlaylistPersistence
     var onUpdate: () -> Void = {}
     @State private var thumbnail: NSImage?
+    @State private var isHoveringThumbnail = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -326,25 +327,55 @@ private struct VideoRowView: View {
             .help(item.isExcluded ? "Include in playlist" : "Exclude from playlist")
 
             // Video thumbnail
-            ZStack {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.secondary.opacity(0.2))
-                    .frame(width: 64, height: 36)
+            ZStack(alignment: .bottomTrailing) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.secondary.opacity(0.15))
+                        .frame(width: 100, height: 56)
 
-                if let thumbnail = thumbnail {
-                    Image(nsImage: thumbnail)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 64, height: 36)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                } else {
-                    Image(systemName: "film")
-                        .foregroundColor(item.isExcluded ? .secondary : .accentColor)
-                        .font(.caption)
+                    if let thumbnail {
+                        Image(nsImage: thumbnail)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 56)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    } else {
+                        Image(systemName: "film")
+                            .foregroundColor(item.isExcluded ? .secondary : .accentColor)
+                            .font(.caption)
+                    }
+
+                    if isHoveringThumbnail && thumbnail != nil {
+                        Circle()
+                            .fill(.black.opacity(0.5))
+                            .frame(width: 28, height: 28)
+                            .overlay(
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.white)
+                                    .offset(x: 1)
+                            )
+                    }
                 }
+                .onHover { hovering in
+                    withAnimation(.easeInOut(duration: 0.15)) { isHoveringThumbnail = hovering }
+                }
+
+                // Format badge
+                Text(formatTag)
+                    .font(.system(size: 8, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 4).padding(.vertical, 1)
+                    .background(Color.blue.opacity(0.85), in: Capsule())
+                    .padding(3)
             }
-            .onAppear {
-                loadThumbnail()
+            .task(id: item.id) {
+                guard thumbnail == nil, let url = item.url else { return }
+                if let cached = ThumbnailCache.shared.thumbnail(for: url) {
+                    thumbnail = cached
+                } else {
+                    thumbnail = await ThumbnailCache.shared.generateThumbnailAsync(for: url)
+                }
             }
 
             // Video info
@@ -363,18 +394,19 @@ private struct VideoRowView: View {
                             .frame(height: 10)
 
                         if let duration = item.durationString {
-                            Text(duration)
-                                .foregroundColor(.blue)
+                            HStack(spacing: 2) {
+                                Image(systemName: "clock")
+                                Text(duration)
+                            }
+                            .foregroundColor(.blue)
                         }
 
                         if let resolution = item.resolutionString {
                             Text(resolution)
-                                .foregroundColor(.purple)
                         }
 
                         if let aspect = item.aspectRatioString {
                             Text(aspect)
-                                .foregroundColor(.orange)
                         }
                     } else {
                         // Loading indicator for metadata
@@ -404,19 +436,8 @@ private struct VideoRowView: View {
         }
     }
 
-    private func loadThumbnail() {
-        guard let url = item.url else { return }
-
-        // Check cache first
-        if let cached = ThumbnailCache.shared.thumbnail(for: url) {
-            thumbnail = cached
-            return
-        }
-
-        // Generate async
-        ThumbnailCache.shared.generateThumbnail(for: url) { image in
-            thumbnail = image
-        }
+    private var formatTag: String {
+        URL(fileURLWithPath: item.filename).pathExtension.uppercased()
     }
 }
 

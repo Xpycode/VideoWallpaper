@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		230E6F882F1C16E10052B143 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 230E6F872F1C16E10052B143 /* Sparkle */; };
-		230E6F8A2F1C181E0052B143 /* UpdateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 230E6F892F1C181E0052B143 /* UpdateController.swift */; };
 		A1000001201C00000001 /* VideoWallpaperApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000001 /* VideoWallpaperApp.swift */; };
 		A1000001201C00000002 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000002 /* AppDelegate.swift */; };
 		A1000001201C00000003 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000003 /* VideoPlayerManager.swift */; };
@@ -24,13 +22,8 @@
 		A1000001201C00000016 /* PlaylistPersistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000016 /* PlaylistPersistence.swift */; };
 		A1000001201C00000017 /* SyncManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000017 /* SyncManager.swift */; };
 		A1000001201C00000021 /* VideoMetadataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000021 /* VideoMetadataLoader.swift */; };
-		A1000001201C00000022 /* SidebarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000022 /* SidebarItem.swift */; };
-		A1000001201C00000023 /* SidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000023 /* SidebarView.swift */; };
-		A1000001201C00000024 /* SidebarNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000024 /* SidebarNavigationView.swift */; };
-		A1000001201C00000025 /* NowPlayingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000025 /* NowPlayingView.swift */; };
 		A1000001201C00000026 /* PlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000026 /* PlaylistView.swift */; };
 		A1000001201C00000027 /* SourceFoldersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000027 /* SourceFoldersView.swift */; };
-		A1000001201C00000028 /* DisplaySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000028 /* DisplaySettingsView.swift */; };
 		A1000001201C00000029 /* AdvancedSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000029 /* AdvancedSettingsView.swift */; };
 		A1000001201C00000030 /* ThumbnailCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000030 /* ThumbnailCache.swift */; };
 		A1000001201C00000031 /* VideoPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000031 /* VideoPreviewView.swift */; };
@@ -45,12 +38,19 @@
 		A1000001201C00000040 /* ScreenLockMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000040 /* ScreenLockMonitor.swift */; };
 		A1000001201C00000041 /* ConsolidatedPlaylistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000041 /* ConsolidatedPlaylistView.swift */; };
 		A1000001201C00000042 /* PlaylistTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000042 /* PlaylistTabBar.swift */; };
+		A1000001201C00000060 /* DropHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000060 /* DropHandling.swift */; };
 		A1000001201C00000043 /* ScheduleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000043 /* ScheduleManager.swift */; };
 		A1000001201C00000044 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000044 /* HotkeyManager.swift */; };
+		A1000001201C00000061 /* CollapsibleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000061 /* CollapsibleSection.swift */; };
+		A1000001201C00000062 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000062 /* MainWindowView.swift */; };
+		A1000001201C00000063 /* SourcesSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000063 /* SourcesSectionView.swift */; };
+		A1000001201C00000064 /* PlaylistSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000064 /* PlaylistSection.swift */; };
+		A1000001201C00000065 /* DisplaySettingsPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000065 /* DisplaySettingsPopover.swift */; };
+		A1000001201C00000066 /* DisplayTileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000066 /* DisplayTileView.swift */; };
+		A1000001201C00000067 /* DisplaysSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001101C00000067 /* DisplaysSectionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		230E6F892F1C181E0052B143 /* UpdateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateController.swift; sourceTree = "<group>"; };
 		A1000001001C00000001 /* VideoWallpaper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VideoWallpaper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000001101C00000001 /* VideoWallpaperApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoWallpaperApp.swift; sourceTree = "<group>"; };
 		A1000001101C00000002 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -69,13 +69,15 @@
 		A1000001101C00000016 /* PlaylistPersistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistPersistence.swift; sourceTree = "<group>"; };
 		A1000001101C00000017 /* SyncManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncManager.swift; sourceTree = "<group>"; };
 		A1000001101C00000021 /* VideoMetadataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMetadataLoader.swift; sourceTree = "<group>"; };
-		A1000001101C00000022 /* SidebarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarItem.swift; sourceTree = "<group>"; };
-		A1000001101C00000023 /* SidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarView.swift; sourceTree = "<group>"; };
-		A1000001101C00000024 /* SidebarNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SidebarNavigationView.swift; sourceTree = "<group>"; };
-		A1000001101C00000025 /* NowPlayingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NowPlayingView.swift; sourceTree = "<group>"; };
+		A1000001101C00000061 /* CollapsibleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollapsibleSection.swift; sourceTree = "<group>"; };
+		A1000001101C00000062 /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
+		A1000001101C00000063 /* SourcesSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesSectionView.swift; sourceTree = "<group>"; };
+		A1000001101C00000064 /* PlaylistSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistSection.swift; sourceTree = "<group>"; };
+		A1000001101C00000065 /* DisplaySettingsPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsPopover.swift; sourceTree = "<group>"; };
+		A1000001101C00000066 /* DisplayTileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayTileView.swift; sourceTree = "<group>"; };
+		A1000001101C00000067 /* DisplaysSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaysSectionView.swift; sourceTree = "<group>"; };
 		A1000001101C00000026 /* PlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistView.swift; sourceTree = "<group>"; };
 		A1000001101C00000027 /* SourceFoldersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceFoldersView.swift; sourceTree = "<group>"; };
-		A1000001101C00000028 /* DisplaySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplaySettingsView.swift; sourceTree = "<group>"; };
 		A1000001101C00000029 /* AdvancedSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedSettingsView.swift; sourceTree = "<group>"; };
 		A1000001101C00000030 /* ThumbnailCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailCache.swift; sourceTree = "<group>"; };
 		A1000001101C00000031 /* VideoPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewView.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 		A1000001101C00000040 /* ScreenLockMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenLockMonitor.swift; sourceTree = "<group>"; };
 		A1000001101C00000041 /* ConsolidatedPlaylistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsolidatedPlaylistView.swift; sourceTree = "<group>"; };
 		A1000001101C00000042 /* PlaylistTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTabBar.swift; sourceTree = "<group>"; };
+		A1000001101C00000060 /* DropHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DropHandling.swift; sourceTree = "<group>"; };
 		A1000001101C00000043 /* ScheduleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleManager.swift; sourceTree = "<group>"; };
 		A1000001101C00000044 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -99,7 +102,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				230E6F882F1C16E10052B143 /* Sparkle in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,13 +179,10 @@
 		A1000001401C00000007 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				A1000001101C00000022 /* SidebarItem.swift */,
-				A1000001101C00000023 /* SidebarView.swift */,
-				A1000001101C00000024 /* SidebarNavigationView.swift */,
-				A1000001101C00000025 /* NowPlayingView.swift */,
-				A1000001101C00000026 /* PlaylistView.swift */,
+				A1000001101C00000062 /* MainWindowView.swift */,
+				A1000001401C00000010 /* Sections */,
+					A1000001101C00000026 /* PlaylistView.swift */,
 				A1000001101C00000027 /* SourceFoldersView.swift */,
-				A1000001101C00000028 /* DisplaySettingsView.swift */,
 				A1000001101C00000029 /* AdvancedSettingsView.swift */,
 				A1000001101C00000009 /* StatusMenuView.swift */,
 				A1000001101C00000031 /* VideoPreviewView.swift */,
@@ -191,8 +190,22 @@
 				A1000001101C00000039 /* QuickControlsPanel.swift */,
 				A1000001101C00000041 /* ConsolidatedPlaylistView.swift */,
 				A1000001101C00000042 /* PlaylistTabBar.swift */,
+				A1000001101C00000060 /* DropHandling.swift */,
 			);
 			path = UI;
+			sourceTree = "<group>";
+		};
+		A1000001401C00000010 /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				A1000001101C00000061 /* CollapsibleSection.swift */,
+				A1000001101C00000063 /* SourcesSectionView.swift */,
+				A1000001101C00000064 /* PlaylistSection.swift */,
+				A1000001101C00000065 /* DisplaySettingsPopover.swift */,
+				A1000001101C00000066 /* DisplayTileView.swift */,
+				A1000001101C00000067 /* DisplaysSectionView.swift */,
+			);
+			path = Sections;
 			sourceTree = "<group>";
 		};
 		A1000001401C00000008 /* Utilities */ = {
@@ -203,7 +216,6 @@
 				A1000001101C00000035 /* AppVisibilityManager.swift */,
 				A1000001101C00000036 /* SupportInfoExporter.swift */,
 				A1000001101C00000040 /* ScreenLockMonitor.swift */,
-				230E6F892F1C181E0052B143 /* UpdateController.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -263,7 +275,6 @@
 			);
 			mainGroup = A1000001401C00000001;
 			packageReferences = (
-				230E6F862F1C16E10052B143 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = A1000001401C00000003 /* Products */;
 			projectDirPath = "";
@@ -294,7 +305,6 @@
 				A1000001201C00000002 /* AppDelegate.swift in Sources */,
 				A1000001201C00000003 /* VideoPlayerManager.swift in Sources */,
 				A1000001201C00000004 /* FolderBookmarkManager.swift in Sources */,
-				230E6F8A2F1C181E0052B143 /* UpdateController.swift in Sources */,
 				A1000001201C00000005 /* PlaylistManager.swift in Sources */,
 				A1000001201C00000006 /* DesktopWindowController.swift in Sources */,
 				A1000001201C00000007 /* DesktopVideoView.swift in Sources */,
@@ -306,13 +316,8 @@
 				A1000001201C00000017 /* SyncManager.swift in Sources */,
 				A1000001201C00000021 /* VideoMetadataLoader.swift in Sources */,
 				A1000001201C00000030 /* ThumbnailCache.swift in Sources */,
-				A1000001201C00000022 /* SidebarItem.swift in Sources */,
-				A1000001201C00000023 /* SidebarView.swift in Sources */,
-				A1000001201C00000024 /* SidebarNavigationView.swift in Sources */,
-				A1000001201C00000025 /* NowPlayingView.swift in Sources */,
-				A1000001201C00000026 /* PlaylistView.swift in Sources */,
+					A1000001201C00000026 /* PlaylistView.swift in Sources */,
 				A1000001201C00000027 /* SourceFoldersView.swift in Sources */,
-				A1000001201C00000028 /* DisplaySettingsView.swift in Sources */,
 				A1000001201C00000029 /* AdvancedSettingsView.swift in Sources */,
 				A1000001201C00000031 /* VideoPreviewView.swift in Sources */,
 				A1000001201C00000032 /* NamedPlaylist.swift in Sources */,
@@ -326,8 +331,16 @@
 				A1000001201C00000040 /* ScreenLockMonitor.swift in Sources */,
 				A1000001201C00000041 /* ConsolidatedPlaylistView.swift in Sources */,
 				A1000001201C00000042 /* PlaylistTabBar.swift in Sources */,
+				A1000001201C00000060 /* DropHandling.swift in Sources */,
 				A1000001201C00000043 /* ScheduleManager.swift in Sources */,
 				A1000001201C00000044 /* HotkeyManager.swift in Sources */,
+				A1000001201C00000061 /* CollapsibleSection.swift in Sources */,
+				A1000001201C00000062 /* MainWindowView.swift in Sources */,
+				A1000001201C00000063 /* SourcesSectionView.swift in Sources */,
+				A1000001201C00000064 /* PlaylistSection.swift in Sources */,
+				A1000001201C00000065 /* DisplaySettingsPopover.swift in Sources */,
+				A1000001201C00000066 /* DisplayTileView.swift in Sources */,
+				A1000001201C00000067 /* DisplaysSectionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,7 +477,7 @@
 				CODE_SIGN_ENTITLEMENTS = VideoWallpaper/Resources/VideoWallpaper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 110;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_FILE_ACCESS_MOVIES_FOLDER = readonly;
@@ -509,7 +522,7 @@
 				CODE_SIGN_ENTITLEMENTS = VideoWallpaper/Resources/VideoWallpaper.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 110;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_FILE_ACCESS_MOVIES_FOLDER = readonly;
@@ -569,24 +582,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		230E6F862F1C16E10052B143 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sparkle-project/Sparkle";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.8.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		230E6F872F1C16E10052B143 /* Sparkle */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 230E6F862F1C16E10052B143 /* XCRemoteSwiftPackageReference "Sparkle" */;
-			productName = Sparkle;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A1000001701C00000001 /* Project object */;
 }

@@ -32,8 +32,14 @@ class DesktopWindowController: NSWindowController {
 
     private let screen: NSScreen
 
-    /// Screen identifier for debugging
+    /// Stable screen identifier for persistence
+    let screenId: String
+
+    /// Screen identifier for display
     let screenName: String
+
+    /// Screen frame for sorting by position
+    var screenFrame: NSRect { screen.frame }
 
     // MARK: - Initialization
 
@@ -44,6 +50,7 @@ class DesktopWindowController: NSWindowController {
     ///                          If nil, creates its own independent manager.
     init(screen: NSScreen, sharedPlayerManager: VideoPlayerManager? = nil) {
         self.screen = screen
+        self.screenId = screen.stableId
         self.screenName = screen.localizedName
 
         // Use shared manager if provided, otherwise create own with screen-specific playlist
@@ -58,6 +65,7 @@ class DesktopWindowController: NSWindowController {
 
         // Create the video view
         videoView = DesktopVideoView(frame: screen.frame)
+        videoView.setScreenId(screen.stableId)
         videoView.setPlayers(playerManager.playerA, playerManager.playerB)
 
         // Create a borderless, non-activating window

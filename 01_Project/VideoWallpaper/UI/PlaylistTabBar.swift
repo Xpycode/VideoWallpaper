@@ -71,11 +71,11 @@ private struct PlaylistTab: View {
     var body: some View {
         Button(action: onSelect) {
             HStack(spacing: 6) {
-                // Active indicator (checkmark)
+                // Active indicator (green dot)
                 if isActive {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(.green)
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 6, height: 6)
                 }
 
                 // Playlist name

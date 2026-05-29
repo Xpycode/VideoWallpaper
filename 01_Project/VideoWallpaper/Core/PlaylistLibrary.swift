@@ -170,7 +170,9 @@ class PlaylistLibrary: ObservableObject {
             let decoded = try JSONDecoder().decode([NamedPlaylist].self, from: data)
             playlists = decoded
         } catch {
+            #if DEBUG
             print("PlaylistLibrary: Failed to decode playlists: \(error)")
+            #endif
         }
     }
 
@@ -179,7 +181,9 @@ class PlaylistLibrary: ObservableObject {
             let data = try JSONEncoder().encode(playlists)
             UserDefaults.standard.set(data, forKey: userDefaultsKey)
         } catch {
+            #if DEBUG
             print("PlaylistLibrary: Failed to encode playlists: \(error)")
+            #endif
         }
     }
 
@@ -209,14 +213,18 @@ class PlaylistLibrary: ObservableObject {
                     seenKeys.insert(item.lookupKey)
                 }
             } catch {
+                #if DEBUG
                 print("PlaylistLibrary: Failed to migrate playlist from \(key): \(error)")
+                #endif
             }
         }
 
         // Create the All Videos playlist if we found any videos
         if !allItems.isEmpty {
             createPlaylist(name: Self.allVideosPlaylistName, items: allItems)
+            #if DEBUG
             print("PlaylistLibrary: Migrated \(allItems.count) videos to All Videos playlist")
+            #endif
         }
     }
 
@@ -273,12 +281,16 @@ class PlaylistLibrary: ObservableObject {
             allVideosPlaylistId = existing.id
             savePlaylists()
 
+            #if DEBUG
             print("PlaylistLibrary: Synced All Videos playlist, \(mergedItems.count) videos")
+            #endif
         } else if !items.isEmpty {
             // Create new All Videos playlist
             let playlist = createPlaylist(name: Self.allVideosPlaylistName, items: items)
             allVideosPlaylistId = playlist.id
+            #if DEBUG
             print("PlaylistLibrary: Created All Videos playlist with \(items.count) videos")
+            #endif
         }
 
         // Auto-assign All Videos playlist if nothing is assigned for playback
@@ -296,7 +308,9 @@ class PlaylistLibrary: ObservableObject {
         let shared = PlaylistPersistence.shared
         if shared.assignedPlaylistId == nil {
             shared.assignedPlaylistId = id
+            #if DEBUG
             print("PlaylistLibrary: Auto-assigned All Videos playlist to shared persistence")
+            #endif
         }
     }
 }

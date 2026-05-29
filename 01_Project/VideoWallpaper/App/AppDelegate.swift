@@ -68,19 +68,28 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         return desktopWindows.first?.playerManager
     }
 
-    /// All active display player managers with their screen info
-    /// In sync mode, returns a single entry. In independent mode, returns one per display.
-    var allDisplayPlayerManagers: [(screenName: String, manager: VideoPlayerManager)] {
+    /// All active display player managers with their screen info.
+    /// In sync mode, returns all physical screens sharing the same manager.
+    /// In independent mode, returns one entry per display.
+    /// Sorted by screen x-position (left to right) for consistent ordering.
+    var allDisplayPlayerManagers: [(screenId: String, screenName: String, manager: VideoPlayerManager)] {
         if syncManager.isSyncEnabled {
             if let manager = syncManager.sharedPlayerManager {
-                return [(screenName: "All Displays (Synced)", manager: manager)]
+                return NSScreen.screens
+                    .sorted { $0.frame.origin.x < $1.frame.origin.x }
+                    .map { screen in
+                        let screenId = "\(screen.deviceDescription[NSDeviceDescriptionKey("NSScreenNumber")] as? UInt32 ?? 0)"
+                        return (screenId: screenId, screenName: screen.localizedName, manager: manager)
+                    }
             }
             return []
         }
 
-        return desktopWindows.map { controller in
-            (screenName: controller.screenName, manager: controller.playerManager)
-        }
+        return desktopWindows
+            .sorted { $0.screenFrame.origin.x < $1.screenFrame.origin.x }
+            .map { controller in
+                (screenId: controller.screenId, screenName: controller.screenName, manager: controller.playerManager)
+            }
     }
 
     // MARK: - Application Lifecycle

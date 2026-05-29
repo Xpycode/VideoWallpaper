@@ -23,6 +23,8 @@ class VideoPlayerManager: ObservableObject {
     @Published var duration: Double = 0
     @Published private(set) var currentIndex: Int = -1
     @Published private(set) var totalVideoCount: Int = 0
+    @Published private(set) var isShuffleEnabled: Bool = false
+    @Published private(set) var isLoopEnabled: Bool = true
 
     /// Current video filename for display
     var currentVideoName: String {
@@ -67,11 +69,11 @@ class VideoPlayerManager: ObservableObject {
     // MARK: - Settings
 
     private var transitionDuration: Double {
-        UserDefaults.standard.double(forKey: "transitionDuration").clamped(to: 0.5...5.0)
+        PlaylistPersistence.forScreen(screenId).transitionDuration.clamped(to: 0.5...5.0)
     }
 
     private var transitionType: TransitionType {
-        TransitionType(rawValue: UserDefaults.standard.integer(forKey: "transitionType")) ?? .crossDissolve
+        TransitionType(rawValue: PlaylistPersistence.forScreen(screenId).transitionType) ?? .crossDissolve
     }
 
     var hasVideos: Bool {
@@ -99,11 +101,10 @@ class VideoPlayerManager: ObservableObject {
 
         // Configure players for wallpaper use
         let preventSleep = UserDefaults.standard.bool(forKey: "preventDisplaySleep")
-        let audioMuted = UserDefaults.standard.object(forKey: "audioMuted") as? Bool ?? true
-        let audioVolume = UserDefaults.standard.object(forKey: "audioVolume") as? Float ?? 0.5
+        let persistence = PlaylistPersistence.forScreen(screenId)
         for player in [playerA, playerB] {
-            player.isMuted = audioMuted
-            player.volume = audioVolume
+            player.isMuted = persistence.audioMuted
+            player.volume = persistence.audioVolume
             player.preventsDisplaySleepDuringVideoPlayback = preventSleep
             player.actionAtItemEnd = .none
         }
@@ -122,6 +123,9 @@ class VideoPlayerManager: ObservableObject {
         // Load initial playlist
         reloadPlaylist()
 
+        // Sync shuffle/loop state from persistence
+        syncPlaylistSettings()
+
         // Observe settings changes
         setupSettingsObservers()
     }
@@ -139,15 +143,13 @@ class VideoPlayerManager: ObservableObject {
 
     private func updateSettingsFromDefaults() {
         let preventSleep = UserDefaults.standard.bool(forKey: "preventDisplaySleep")
-        let audioMuted = UserDefaults.standard.object(forKey: "audioMuted") as? Bool ?? true
-        let audioVolume = UserDefaults.standard.object(forKey: "audioVolume") as? Float ?? 0.5
-        let playbackRate = UserDefaults.standard.object(forKey: "playbackRate") as? Float ?? 1.0
+        let persistence = PlaylistPersistence.forScreen(screenId)
 
         for player in [playerA, playerB] {
             player.preventsDisplaySleepDuringVideoPlayback = preventSleep
-            player.isMuted = audioMuted
-            player.volume = audioVolume
-            player.rate = isPlaying ? playbackRate.clamped(to: 0.5...2.0) : 0
+            player.isMuted = persistence.audioMuted
+            player.volume = persistence.audioVolume
+            player.rate = isPlaying ? persistence.playbackRate.clamped(to: 0.5...2.0) : 0
         }
     }
 
@@ -170,8 +172,8 @@ class VideoPlayerManager: ObservableObject {
         if currentVideoIndex < 0 {
             prepareNextVideo()
         } else {
-            let playbackRate = UserDefaults.standard.object(forKey: "playbackRate") as? Float ?? 1.0
-            activePlayer.rate = playbackRate.clamped(to: 0.5...2.0)
+            let rate = PlaylistPersistence.forScreen(screenId).playbackRate
+            activePlayer.rate = rate.clamped(to: 0.5...2.0)
         }
         isPlaying = true
     }
@@ -231,6 +233,7 @@ class VideoPlayerManager: ObservableObject {
             totalVideoCount = playlistManager.videoURLs.count
             os_log(.info, log: log, "Loaded %d videos from playlist '%{public}@'",
                    playlistManager.videoURLs.count, playlist.name)
+            syncPlaylistSettings()
             return
         }
 
@@ -241,6 +244,33 @@ class VideoPlayerManager: ObservableObject {
         currentVideoIndex = -1
         totalVideoCount = playlistManager.videoURLs.count
         os_log(.info, log: log, "Loaded %d videos from folders", urls.count)
+
+        syncPlaylistSettings()
+    }
+
+    // MARK: - Shuffle / Loop
+
+    private func syncPlaylistSettings() {
+        let persistence = PlaylistPersistence.forScreen(screenId)
+        isShuffleEnabled = persistence.shuffleEnabled
+        isLoopEnabled = persistence.loopEnabled
+    }
+
+    func toggleShuffle() {
+        let persistence = PlaylistPersistence.forScreen(screenId)
+        persistence.shuffleEnabled.toggle()
+        isShuffleEnabled = persistence.shuffleEnabled
+        if isShuffleEnabled {
+            playlistManager.reshuffle()
+        } else {
+            playlistManager.reloadFromPersistence()
+        }
+    }
+
+    func toggleLoop() {
+        let persistence = PlaylistPersistence.forScreen(screenId)
+        persistence.loopEnabled.toggle()
+        isLoopEnabled = persistence.loopEnabled
     }
 
     // MARK: - Video Preparation
@@ -352,8 +382,8 @@ class VideoPlayerManager: ObservableObject {
         removePlaybackNotificationObservers()
 
         // Start new player with configured rate
-        let playbackRate = UserDefaults.standard.object(forKey: "playbackRate") as? Float ?? 1.0
-        newPlayer.rate = playbackRate.clamped(to: 0.5...2.0)
+        let rate = PlaylistPersistence.forScreen(screenId).playbackRate
+        newPlayer.rate = rate.clamped(to: 0.5...2.0)
 
         // Update duration for new video
         updateDuration()

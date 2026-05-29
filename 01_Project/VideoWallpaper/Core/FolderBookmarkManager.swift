@@ -12,6 +12,14 @@ import Foundation
 import UniformTypeIdentifiers
 import os.log
 
+/// Result of attempting to add a folder
+enum AddFolderResult {
+    case added
+    case duplicate
+    case overlapsParent(URL)  // new folder is inside an existing folder
+    case overlapsChild(URL)   // new folder contains an existing folder
+}
+
 /// Manages security-scoped bookmarks for persistent folder access.
 /// This is required for sandboxed apps to access user-selected folders across launches.
 class FolderBookmarkManager: ObservableObject {
@@ -19,15 +27,18 @@ class FolderBookmarkManager: ObservableObject {
     // MARK: - Constants
 
     private static let bookmarksKey = "videoFoldersBookmarks"
+    private static let videoFilesKey = "videoFilesBookmarks"
     private static let recursiveScanKey = "recursiveScan"
 
     // MARK: - Published Properties
 
     @Published private(set) var folderURLs: [URL] = []
+    @Published private(set) var fileURLs: [URL] = []
 
     // MARK: - Private Properties
 
     private var accessedURLs: Set<URL> = []
+    private var accessedFileURLs: Set<URL> = []
     private let log = OSLog(subsystem: "com.videowallpaper", category: "folders")
 
     // MARK: - Initialization
@@ -46,14 +57,35 @@ class FolderBookmarkManager: ObservableObject {
     func loadBookmarks() {
         stopAccessingAllFolders()
         folderURLs.removeAll()
+        fileURLs.removeAll()
 
-        guard let bookmarksData = UserDefaults.standard.array(forKey: Self.bookmarksKey) as? [Data] else {
-            os_log(.info, log: log, "No bookmarks found in UserDefaults")
-            return
+        // Load folder bookmarks
+        if let bookmarksData = UserDefaults.standard.array(forKey: Self.bookmarksKey) as? [Data] {
+            os_log(.info, log: log, "Found %d folder bookmarks in UserDefaults", bookmarksData.count)
+            let (resolvedURLs, updatedData) = resolveBookmarkData(bookmarksData, accessedSet: &accessedURLs)
+            folderURLs = resolvedURLs
+            UserDefaults.standard.set(updatedData.data, forKey: Self.bookmarksKey)
+        } else {
+            os_log(.info, log: log, "No folder bookmarks found in UserDefaults")
         }
 
-        os_log(.info, log: log, "Found %d bookmarks in UserDefaults", bookmarksData.count)
+        // Load individual file bookmarks (key may be absent for existing users — that is fine)
+        if let fileBookmarksData = UserDefaults.standard.array(forKey: Self.videoFilesKey) as? [Data] {
+            os_log(.info, log: log, "Found %d file bookmarks in UserDefaults", fileBookmarksData.count)
+            let (resolvedURLs, updatedData) = resolveBookmarkData(fileBookmarksData, accessedSet: &accessedFileURLs)
+            fileURLs = resolvedURLs
+            UserDefaults.standard.set(updatedData.data, forKey: Self.videoFilesKey)
+        }
+    }
 
+    /// Resolves an array of bookmark data blobs into live URLs, starting security-scoped access
+    /// for each one that succeeds. Returns the resolved URLs and the (possibly regenerated) bookmark
+    /// data array, along with a flag indicating whether any data was regenerated.
+    private func resolveBookmarkData(
+        _ bookmarksData: [Data],
+        accessedSet: inout Set<URL>
+    ) -> (urls: [URL], data: (data: [Data], needsUpdate: Bool)) {
+        var resolvedURLs: [URL] = []
         var updatedBookmarks: [Data] = []
         var needsUpdate = false
 
@@ -88,10 +120,10 @@ class FolderBookmarkManager: ObservableObject {
 
                 if canAccess {
                     if hasSecurityAccess {
-                        accessedURLs.insert(url)
+                        accessedSet.insert(url)
                     }
-                    folderURLs.append(url)
-                    os_log(.info, log: log, "Successfully accessed folder: %{public}@ (security-scoped: %{public}@)",
+                    resolvedURLs.append(url)
+                    os_log(.info, log: log, "Successfully accessed resource: %{public}@ (security-scoped: %{public}@)",
                            url.path, hasSecurityAccess ? "yes" : "no")
 
                     // Regenerate stale bookmarks
@@ -111,7 +143,7 @@ class FolderBookmarkManager: ObservableObject {
                         updatedBookmarks.append(bookmarkData)
                     }
                 } else {
-                    os_log(.error, log: log, "Failed to access folder: %{public}@", url.path)
+                    os_log(.error, log: log, "Failed to access resource: %{public}@", url.path)
                     updatedBookmarks.append(bookmarkData)
                 }
             } catch {
@@ -119,17 +151,35 @@ class FolderBookmarkManager: ObservableObject {
             }
         }
 
-        if needsUpdate {
-            UserDefaults.standard.set(updatedBookmarks, forKey: Self.bookmarksKey)
+        return (resolvedURLs, (updatedBookmarks, needsUpdate))
+    }
+
+    /// Checks if a new folder overlaps with existing folders
+    func findOverlap(for url: URL) -> AddFolderResult? {
+        let newComponents = url.standardizedFileURL.pathComponents
+        for existing in folderURLs {
+            let existingComponents = existing.standardizedFileURL.pathComponents
+            // Check if new is child of existing
+            if newComponents.count > existingComponents.count,
+               zip(existingComponents, newComponents).allSatisfy({ $0 == $1 }) {
+                return .overlapsParent(existing)
+            }
+            // Check if new is parent of existing
+            if existingComponents.count > newComponents.count,
+               zip(newComponents, existingComponents).allSatisfy({ $0 == $1 }) {
+                return .overlapsChild(existing)
+            }
         }
+        return nil
     }
 
     /// Adds a new folder and saves its bookmark
-    func addFolder(_ url: URL) -> Bool {
+    @discardableResult
+    func addFolder(_ url: URL) -> AddFolderResult {
         // Check for duplicates
         if folderURLs.contains(where: { $0.path == url.path }) {
             os_log(.info, log: log, "Folder already exists: %{public}@", url.path)
-            return false
+            return .duplicate
         }
 
         do {
@@ -143,7 +193,7 @@ class FolderBookmarkManager: ObservableObject {
             var bookmarks = UserDefaults.standard.array(forKey: Self.bookmarksKey) as? [Data] ?? []
             bookmarks.append(bookmarkData)
             UserDefaults.standard.set(bookmarks, forKey: Self.bookmarksKey)
-            
+
             os_log(.info, log: log, "Saved bookmark for folder: %{public}@", url.path)
 
             // Start accessing and add to list
@@ -159,7 +209,7 @@ class FolderBookmarkManager: ObservableObject {
             // Notify that folders changed
             NotificationCenter.default.post(name: .videoFoldersDidChange, object: nil)
 
-            return true
+            return .added
         } catch {
             os_log(.error, log: log, "Failed to create bookmark: %{public}@", error.localizedDescription)
 
@@ -174,13 +224,13 @@ class FolderBookmarkManager: ObservableObject {
                 var bookmarks = UserDefaults.standard.array(forKey: Self.bookmarksKey) as? [Data] ?? []
                 bookmarks.append(bookmarkData)
                 UserDefaults.standard.set(bookmarks, forKey: Self.bookmarksKey)
-                
+
                 folderURLs.append(url)
                 os_log(.info, log: log, "Added folder with regular bookmark: %{public}@", url.path)
-                return true
+                return .added
             } catch {
                 os_log(.error, log: log, "Failed to create regular bookmark: %{public}@", error.localizedDescription)
-                return false
+                return .duplicate
             }
         }
     }
@@ -211,17 +261,112 @@ class FolderBookmarkManager: ObservableObject {
         NotificationCenter.default.post(name: .videoFoldersDidChange, object: nil)
     }
 
-    /// Stops accessing all security-scoped resources
+    /// Adds a new individual video file and saves its bookmark
+    @discardableResult
+    func addFile(_ url: URL) -> AddFolderResult {
+        // Check for duplicates
+        if fileURLs.contains(where: { $0.path == url.path }) {
+            os_log(.info, log: log, "File already exists: %{public}@", url.path)
+            return .duplicate
+        }
+
+        do {
+            // Try creating a security-scoped bookmark
+            let bookmarkData = try url.bookmarkData(
+                options: .withSecurityScope,
+                includingResourceValuesForKeys: nil,
+                relativeTo: nil
+            )
+
+            var bookmarks = UserDefaults.standard.array(forKey: Self.videoFilesKey) as? [Data] ?? []
+            bookmarks.append(bookmarkData)
+            UserDefaults.standard.set(bookmarks, forKey: Self.videoFilesKey)
+
+            os_log(.info, log: log, "Saved bookmark for file: %{public}@", url.path)
+
+            // Start accessing and add to list
+            let hasSecurityAccess = url.startAccessingSecurityScopedResource()
+            if hasSecurityAccess {
+                accessedFileURLs.insert(url)
+            }
+            fileURLs.append(url)
+
+            os_log(.info, log: log, "Added file: %{public}@ (security-scoped: %{public}@)",
+                   url.path, hasSecurityAccess ? "yes" : "no")
+
+            // Notify that folders changed
+            NotificationCenter.default.post(name: .videoFoldersDidChange, object: nil)
+
+            return .added
+        } catch {
+            os_log(.error, log: log, "Failed to create bookmark: %{public}@", error.localizedDescription)
+
+            // For non-sandboxed apps, try saving a regular bookmark
+            do {
+                let bookmarkData = try url.bookmarkData(
+                    options: [],
+                    includingResourceValuesForKeys: nil,
+                    relativeTo: nil
+                )
+
+                var bookmarks = UserDefaults.standard.array(forKey: Self.videoFilesKey) as? [Data] ?? []
+                bookmarks.append(bookmarkData)
+                UserDefaults.standard.set(bookmarks, forKey: Self.videoFilesKey)
+
+                fileURLs.append(url)
+                os_log(.info, log: log, "Added file with regular bookmark: %{public}@", url.path)
+
+                NotificationCenter.default.post(name: .videoFoldersDidChange, object: nil)
+
+                return .added
+            } catch {
+                os_log(.error, log: log, "Failed to create regular bookmark: %{public}@", error.localizedDescription)
+                return .duplicate
+            }
+        }
+    }
+
+    /// Removes an individual file at the specified index
+    func removeFile(at index: Int) {
+        guard index >= 0 && index < fileURLs.count else { return }
+
+        let url = fileURLs[index]
+
+        // Stop accessing
+        if accessedFileURLs.contains(url) {
+            url.stopAccessingSecurityScopedResource()
+            accessedFileURLs.remove(url)
+        }
+
+        // Remove from list
+        fileURLs.remove(at: index)
+
+        // Update stored bookmarks
+        var bookmarks = UserDefaults.standard.array(forKey: Self.videoFilesKey) as? [Data] ?? []
+        if index < bookmarks.count {
+            bookmarks.remove(at: index)
+            UserDefaults.standard.set(bookmarks, forKey: Self.videoFilesKey)
+        }
+
+        // Notify that folders changed
+        NotificationCenter.default.post(name: .videoFoldersDidChange, object: nil)
+    }
+
+    /// Stops accessing all security-scoped resources (folders and individual files)
     func stopAccessingAllFolders() {
         for url in accessedURLs {
             url.stopAccessingSecurityScopedResource()
         }
         accessedURLs.removeAll()
+        for url in accessedFileURLs {
+            url.stopAccessingSecurityScopedResource()
+        }
+        accessedFileURLs.removeAll()
     }
 
     // MARK: - Video Discovery
 
-    /// Loads all video URLs from all configured folders
+    /// Loads all video URLs from all configured folders and individual files
     func loadAllVideoURLs() -> [URL] {
         let recursive = UserDefaults.standard.bool(forKey: Self.recursiveScanKey)
         var allVideos: [URL] = []
@@ -234,6 +379,14 @@ class FolderBookmarkManager: ObservableObject {
             os_log(.info, log: log, "Found %d videos in %{public}@", videos.count, folderURL.lastPathComponent)
             allVideos.append(contentsOf: videos)
         }
+
+        // Append individually-bookmarked files; skip any that are no longer readable
+        let readableFiles = fileURLs.filter { FileManager.default.isReadableFile(atPath: $0.path) }
+        if readableFiles.count < fileURLs.count {
+            os_log(.info, log: log, "Skipped %d unreadable individual file(s)",
+                   fileURLs.count - readableFiles.count)
+        }
+        allVideos.append(contentsOf: readableFiles)
 
         return allVideos
     }

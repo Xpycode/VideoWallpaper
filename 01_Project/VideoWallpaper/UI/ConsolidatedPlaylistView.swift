@@ -15,16 +15,20 @@ struct ConsolidatedPlaylistView: View {
     @ObservedObject private var syncManager = SyncManager.shared
     @StateObject private var folderManager = FolderBookmarkManager()
 
+    /// Selected screen — owned by PlaylistSection, passed as binding
+    @Binding var selectedScreenId: String
+
     /// Currently selected playlist for viewing/editing
     @State private var selectedPlaylistId: UUID?
 
     /// Currently active playlist for playback (per screen)
     @State private var activePlaylistId: UUID?
 
-    /// Selected screen when sync mode is off
-    @State private var selectedScreenId: String = "default"
-    @State private var availableScreens: [String] = []
-    @State private var screenDisplayNames: [String: String] = [:]  // stableId -> localizedName
+    /// Multi-select (All Videos tab)
+    @State private var selectedItemIds: Set<UUID> = []
+
+    /// Group by folder toggle (All Videos)
+    @State private var groupByFolder = false
 
     /// UI State
     @State private var isCreatingPlaylist = false
@@ -60,9 +64,6 @@ struct ConsolidatedPlaylistView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Monitor selector (when sync is off)
-            monitorHeader
-
             // Playlist tabs
             PlaylistTabBar(
                 playlists: library.playlists,
@@ -103,9 +104,40 @@ struct ConsolidatedPlaylistView: View {
                 playlistFooter
             }
         }
+        .videoDropTarget(
+            onFolder: { url in
+                folderManager.addFolder(url)
+                AppDelegate.shared?.reloadPlaylist()
+            },
+            onVideos: { urls in
+                let targetPlaylistId: UUID
+                let targetPlaylist: NamedPlaylist
+                if let playlistId = selectedPlaylistId,
+                   let playlist = library.playlist(withId: playlistId) {
+                    targetPlaylistId = playlistId
+                    targetPlaylist = playlist
+                } else {
+                    let playlist = library.playlists.first { $0.name == PlaylistLibrary.allVideosPlaylistName }
+                        ?? library.createPlaylist(name: PlaylistLibrary.allVideosPlaylistName)
+                    targetPlaylistId = playlist.id
+                    targetPlaylist = playlist
+                }
+                library.addVideos(urls.map { PlaylistItem(url: $0) }, to: targetPlaylistId)
+                if persistence.assignedPlaylistId == nil {
+                    setActivePlaylist(targetPlaylist)
+                }
+                AppDelegate.shared?.reloadPlaylist()
+            }
+        )
         .onAppear {
-            loadAvailableScreens()
             initializeSelection()
+        }
+        .onChange(of: selectedPlaylistId) { _ in
+            selectedItemIds.removeAll()
+        }
+        .onChange(of: selectedScreenId) { _ in
+            activePlaylistId = persistence.assignedPlaylistId
+            refreshTrigger = UUID()
         }
         .onReceive(library.$playlists) { playlists in
             // Ensure we have a selection
@@ -115,56 +147,11 @@ struct ConsolidatedPlaylistView: View {
             // Load active playlist from persistence
             activePlaylistId = persistence.assignedPlaylistId
         }
-        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)) { _ in
-            loadAvailableScreens()
-        }
         .sheet(isPresented: $isCreatingPlaylist) {
             createPlaylistSheet
         }
         .sheet(item: $playlistToRename) { playlist in
             renamePlaylistSheet(playlist: playlist)
-        }
-    }
-
-    // MARK: - Monitor Header
-
-    @ViewBuilder
-    private var monitorHeader: some View {
-        if syncManager.isSyncEnabled {
-            // Sync mode indicator
-            HStack(spacing: 6) {
-                Image(systemName: "link")
-                    .foregroundColor(.orange)
-                Text("All Monitors Synced")
-                    .font(.headline)
-                Text("— Using shared playlist")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            .padding(.vertical, 12)
-            .frame(maxWidth: .infinity)
-            .background(Color.orange.opacity(0.1))
-        } else if availableScreens.count > 1 {
-            // Monitor tabs
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 4) {
-                    ForEach(availableScreens, id: \.self) { screenId in
-                        MonitorTabButton(
-                            title: screenDisplayNames[screenId] ?? screenId,
-                            systemImage: screenId == "default" ? "star.fill" : "display",
-                            isSelected: selectedScreenId == screenId,
-                            hasVideos: true
-                        ) {
-                            selectedScreenId = screenId
-                            activePlaylistId = PlaylistPersistence.forScreen(screenId).assignedPlaylistId
-                            refreshTrigger = UUID()
-                        }
-                    }
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-            }
-            .background(Color(NSColor.controlBackgroundColor))
         }
     }
 
@@ -192,7 +179,8 @@ struct ConsolidatedPlaylistView: View {
 
             Spacer()
 
-            if let playlist = selectedPlaylist {
+            if let playlist = selectedPlaylist,
+               playlist.name != PlaylistLibrary.allVideosPlaylistName {
                 // Shuffle & Loop toggles
                 HStack(spacing: 8) {
                     Button {
@@ -228,6 +216,61 @@ struct ConsolidatedPlaylistView: View {
                     .cornerRadius(6)
                 }
                 .id(refreshTrigger)
+            }
+
+            // Add selection to playlist (All Videos only, when items selected)
+            if selectedPlaylist?.name == PlaylistLibrary.allVideosPlaylistName,
+               !selectedItemIds.isEmpty {
+                let namedPlaylists = library.playlists.filter {
+                    $0.name != PlaylistLibrary.allVideosPlaylistName
+                }
+                if !namedPlaylists.isEmpty {
+                    Menu {
+                        ForEach(namedPlaylists) { pl in
+                            Button(pl.name) {
+                                let items = filteredItems.filter { selectedItemIds.contains($0.id) }
+                                library.addVideos(items, to: pl.id)
+                                selectedItemIds.removeAll()
+                            }
+                        }
+                    } label: {
+                        Label("\(selectedItemIds.count) selected", systemImage: "plus.rectangle.on.rectangle")
+                    }
+                    .menuStyle(.borderlessButton)
+                    .help("Add selected videos to playlist")
+                }
+            }
+
+            // Group by folder toggle (All Videos)
+            if selectedPlaylist?.name == PlaylistLibrary.allVideosPlaylistName {
+                Button {
+                    groupByFolder.toggle()
+                } label: {
+                    Image(systemName: groupByFolder ? "folder.fill" : "folder")
+                }
+                .buttonStyle(.bordered)
+                .tint(groupByFolder ? .accentColor : nil)
+                .help(groupByFolder ? "Show flat list" : "Group by folder")
+            }
+
+            // Sort picker (All Videos — surfaces buried sort menu)
+            if let playlist = selectedPlaylist,
+               playlist.name == PlaylistLibrary.allVideosPlaylistName {
+                Picker("Sort", selection: Binding(
+                    get: { playlist.sortOrder },
+                    set: { newOrder in
+                        var updated = playlist
+                        updated.sortOrder = newOrder
+                        library.updatePlaylist(updated)
+                    }
+                )) {
+                    ForEach(PlaylistSortOrder.allCases) { order in
+                        Label(order.displayName, systemImage: order.systemImage)
+                            .tag(order)
+                    }
+                }
+                .pickerStyle(.menu)
+                .frame(maxWidth: 120)
             }
 
             // Search
@@ -325,22 +368,52 @@ struct ConsolidatedPlaylistView: View {
         } else if filteredItems.isEmpty {
             emptyStateNoMatches
         } else {
-            List {
-                ForEach(filteredItems) { item in
-                    PlaylistVideoRowView(
-                        item: item,
-                        playlist: selectedPlaylist!,
-                        onToggleExclusion: {
-                            library.toggleVideoExclusion(itemId: item.id, in: selectedPlaylist!.id)
-                            refreshTrigger = UUID()
-                        }
-                    )
-                }
-                .onMove { source, destination in
-                    moveItems(from: source, to: destination)
+            let isAllVideos = selectedPlaylist!.name == PlaylistLibrary.allVideosPlaylistName
+            List(selection: isAllVideos ? $selectedItemIds : nil) {
+                if isAllVideos && groupByFolder {
+                    groupedVideoList
+                } else {
+                    ForEach(filteredItems) { item in
+                        videoRow(item: item, isAllVideos: isAllVideos)
+                    }
+                    .onMove { source, destination in
+                        moveItems(from: source, to: destination)
+                    }
                 }
             }
             .id(refreshTrigger)
+        }
+    }
+
+    private func videoRow(item: PlaylistItem, isAllVideos: Bool) -> some View {
+        PlaylistVideoRowView(
+            item: item,
+            playlist: selectedPlaylist!,
+            isAllVideos: isAllVideos,
+            onToggleExclusion: {
+                library.toggleVideoExclusion(itemId: item.id, in: selectedPlaylist!.id)
+                refreshTrigger = UUID()
+            },
+            onAddToPlaylist: { playlistId in
+                library.addVideos([item], to: playlistId)
+            }
+        )
+        .tag(item.id)
+    }
+
+    @ViewBuilder
+    private var groupedVideoList: some View {
+        let grouped = Dictionary(grouping: filteredItems) { item -> String in
+            URL(fileURLWithPath: item.folderPath).lastPathComponent
+        }
+        let sortedKeys = grouped.keys.sorted()
+
+        ForEach(sortedKeys, id: \.self) { folderName in
+            DisclosureGroup(folderName) {
+                ForEach(grouped[folderName]!) { item in
+                    videoRow(item: item, isAllVideos: true)
+                }
+            }
         }
     }
 
@@ -372,12 +445,20 @@ struct ConsolidatedPlaylistView: View {
             Text("No videos in playlist")
                 .font(.headline)
             if selectedPlaylist?.name == PlaylistLibrary.allVideosPlaylistName {
-                Text("Add video folders in Video Folders")
+                Text("Add video folders in Sources")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-            } else {
-                Text("Add videos from Video Folders or All Videos playlist")
-                    .font(.subheadline)
+            } else if let playlist = selectedPlaylist {
+                Button {
+                    addAllVideosToPlaylist(playlist)
+                } label: {
+                    Label("Add from All Videos", systemImage: "plus.circle.fill")
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 4)
+
+                Text("Or use + in the toolbar to add from specific folders")
+                    .font(.caption)
                     .foregroundColor(.secondary)
             }
             Spacer()
@@ -491,25 +572,6 @@ struct ConsolidatedPlaylistView: View {
 
     // MARK: - Actions
 
-    private func loadAvailableScreens() {
-        var screens = ["default"]
-        var displayNames: [String: String] = ["default": "Default"]
-
-        for screen in NSScreen.screens {
-            let stableId = screen.stableId
-            if !screens.contains(stableId) {
-                screens.append(stableId)
-                displayNames[stableId] = screen.localizedName
-            }
-        }
-        availableScreens = screens
-        screenDisplayNames = displayNames
-
-        if !availableScreens.contains(selectedScreenId) {
-            selectedScreenId = "default"
-        }
-    }
-
     private func initializeSelection() {
         // Select first playlist if none selected
         if selectedPlaylistId == nil, let first = library.playlists.first {
@@ -606,6 +668,14 @@ struct ConsolidatedPlaylistView: View {
         refreshTrigger = UUID()
     }
 
+    private func addAllVideosToPlaylist(_ playlist: NamedPlaylist) {
+        guard let allVideos = library.playlists.first(where: { $0.name == PlaylistLibrary.allVideosPlaylistName }) else { return }
+        let items = allVideos.items.filter { !$0.isExcluded }
+        guard !items.isEmpty else { return }
+        library.addVideos(items, to: playlist.id)
+        refreshTrigger = UUID()
+    }
+
     private func addVideosFromFolder(_ folderURL: URL, to playlist: NamedPlaylist) {
         let urls = folderManager.loadVideoURLs(from: folderURL)
 
@@ -620,42 +690,20 @@ struct ConsolidatedPlaylistView: View {
     }
 }
 
-// MARK: - Monitor Tab Button (reused from PlaylistView)
-
-private struct MonitorTabButton: View {
-    let title: String
-    let systemImage: String
-    let isSelected: Bool
-    let hasVideos: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 6) {
-                Image(systemName: systemImage)
-                    .font(.caption)
-                Text(title)
-                    .lineLimit(1)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(isSelected ? Color.accentColor : Color.clear)
-            )
-            .foregroundColor(isSelected ? .white : .primary)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
 // MARK: - Video Row
 
 private struct PlaylistVideoRowView: View {
     let item: PlaylistItem
     let playlist: NamedPlaylist
+    let isAllVideos: Bool
     let onToggleExclusion: () -> Void
+    let onAddToPlaylist: ((UUID) -> Void)?
     @State private var thumbnail: NSImage?
+    @State private var isHoveringThumbnail = false
+
+    private var formatTag: String {
+        URL(fileURLWithPath: item.filename).pathExtension.uppercased()
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -669,25 +717,54 @@ private struct PlaylistVideoRowView: View {
             .help(item.isExcluded ? "Include in playlist" : "Exclude from playlist")
 
             // Video thumbnail
-            ZStack {
-                RoundedRectangle(cornerRadius: 4)
-                    .fill(Color.secondary.opacity(0.2))
-                    .frame(width: 64, height: 36)
+            ZStack(alignment: .bottomTrailing) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.secondary.opacity(0.15))
+                        .frame(width: 100, height: 56)
 
-                if let thumbnail = thumbnail {
-                    Image(nsImage: thumbnail)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 64, height: 36)
-                        .clipShape(RoundedRectangle(cornerRadius: 4))
-                } else {
-                    Image(systemName: "film")
-                        .foregroundColor(item.isExcluded ? .secondary : .accentColor)
-                        .font(.caption)
+                    if let thumbnail {
+                        Image(nsImage: thumbnail)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 56)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    } else {
+                        Image(systemName: "film")
+                            .foregroundColor(item.isExcluded ? .secondary : .accentColor)
+                            .font(.caption)
+                    }
+
+                    if isHoveringThumbnail && thumbnail != nil {
+                        Circle()
+                            .fill(.black.opacity(0.5))
+                            .frame(width: 28, height: 28)
+                            .overlay(
+                                Image(systemName: "play.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.white)
+                                    .offset(x: 1)
+                            )
+                    }
                 }
+                .onHover { hovering in
+                    withAnimation(.easeInOut(duration: 0.15)) { isHoveringThumbnail = hovering }
+                }
+
+                Text(formatTag)
+                    .font(.system(size: 8, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 4).padding(.vertical, 1)
+                    .background(Color.blue.opacity(0.85), in: Capsule())
+                    .padding(3)
             }
-            .onAppear {
-                loadThumbnail()
+            .task(id: item.id) {
+                guard thumbnail == nil, let url = item.url else { return }
+                if let cached = ThumbnailCache.shared.thumbnail(for: url) {
+                    thumbnail = cached
+                } else {
+                    thumbnail = await ThumbnailCache.shared.generateThumbnailAsync(for: url)
+                }
             }
 
             // Video info
@@ -701,22 +778,22 @@ private struct PlaylistVideoRowView: View {
                         .lineLimit(1)
 
                     if item.hasMetadata {
-                        Divider()
-                            .frame(height: 10)
+                        Divider().frame(height: 10)
 
                         if let duration = item.durationString {
-                            Text(duration)
-                                .foregroundColor(.blue)
+                            HStack(spacing: 2) {
+                                Image(systemName: "clock")
+                                Text(duration)
+                            }
+                            .foregroundColor(.blue)
                         }
 
                         if let resolution = item.resolutionString {
                             Text(resolution)
-                                .foregroundColor(.purple)
                         }
 
                         if let aspect = item.aspectRatioString {
                             Text(aspect)
-                                .foregroundColor(.orange)
                         }
                     }
                 }
@@ -725,6 +802,29 @@ private struct PlaylistVideoRowView: View {
             }
 
             Spacer()
+
+            // Add to playlist (All Videos only)
+            if isAllVideos, let onAdd = onAddToPlaylist {
+                let namedPlaylists = PlaylistLibrary.shared.playlists.filter {
+                    $0.name != PlaylistLibrary.allVideosPlaylistName
+                }
+                if !namedPlaylists.isEmpty {
+                    Menu {
+                        ForEach(namedPlaylists) { pl in
+                            Button(pl.name) {
+                                onAdd(pl.id)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "plus.circle")
+                            .foregroundColor(.secondary)
+                            .font(.body)
+                    }
+                    .menuStyle(.borderlessButton)
+                    .frame(width: 24)
+                    .help("Add to playlist")
+                }
+            }
 
             // Drag handle
             Image(systemName: "line.3.horizontal")
@@ -747,22 +847,9 @@ private struct PlaylistVideoRowView: View {
             library: PlaylistLibrary.shared
         )
     }
-
-    private func loadThumbnail() {
-        guard let url = item.url else { return }
-
-        if let cached = ThumbnailCache.shared.thumbnail(for: url) {
-            thumbnail = cached
-            return
-        }
-
-        ThumbnailCache.shared.generateThumbnail(for: url) { image in
-            thumbnail = image
-        }
-    }
 }
 
 #Preview {
-    ConsolidatedPlaylistView()
+    ConsolidatedPlaylistView(selectedScreenId: .constant("default"))
         .frame(width: 600, height: 500)
 }

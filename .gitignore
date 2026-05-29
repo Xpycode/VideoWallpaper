@@ -40,3 +40,8 @@ Icon Exports/
 
 # Export/Release artifacts
 04-Export/
+*.dmg
+*.app/
+
+# Embedding cache
+.fastembed_cache/

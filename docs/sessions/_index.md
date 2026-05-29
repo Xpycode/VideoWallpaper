@@ -1,7 +1,7 @@
 # Session History
 
 ## Active Project
-Video Wallpaper - macOS menu bar app for video desktop wallpaper
+Video Wallpaper - macOS windowed app (Dock + menu bar) for video desktop wallpaper
 
 ## Current Status
 → See [PROJECT_STATE.md](../PROJECT_STATE.md)
@@ -10,6 +10,22 @@ Video Wallpaper - macOS menu bar app for video desktop wallpaper
 
 | Date | Focus | Outcome | Log |
 |------|-------|---------|-----|
+| 2026-05-28 | **Layout Redesign Planning** | Accordion window plan: 3 collapsible sections replace sidebar, custom CollapsibleSection (not DisclosureGroup — bug), per-display ⚙ popover, Advanced Settings → cmd+, — **PLANNED** | [2026-05-28](2026-05-28.md) |
+| 2026-04-28 | **Onboarding UX Implementation** | Drop-anywhere targets, mixed file/folder picker, file-bookmark persistence, hero empty state, auto-activate, menu-bar shortcuts — 6 commits, build green - **DONE** | [2026-04-28](2026-04-28.md) |
+| 2026-03-09 | **All User Testing Issues** | Resolved all 15 feedback items: sources UX, badges, subfolder info, add-to-playlist, multi-select, folder grouping, sync tiles, display ordering — 8 commits - **DONE** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **Sources UX Plan** | Planned fixes for #2/#3/#4: 28pt buttons, per-row delete (context menu + hover trash), subfolder overlap detection — 4 tasks, 2 waves - **PLANNED** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **P0 Sync Toggle Fix** | Fixed invisible sync toggle: check NSScreen.screens.count instead of manager array, show all tiles in sync mode - **DONE** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **User Testing Feedback** | 15 issues logged across Sources, Playlists, Displays — P0: sync toggle stuck, P1: click targets/badges/UX - **LOGGED** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **Pipeline Layout Execution** | 4 waves (12 tasks): sidebar restructure, per-display settings migration, ArrangementView hub, NowPlaying cleanup - **DONE** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **Pipeline Layout Plan** | Designed new sidebar flow (Sources->Playlists->Displays->NowPlaying->Settings), multi-model review, 4-phase plan - **PLANNED** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **Display View Overhaul** | Live video tiles, per-display controls, SHUFFLE/CONTINUE buttons, stale state fix - **DONE** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **Display Enhancement Execution** | Implemented shuffle/loop toggles + display arrangement view, 2 waves, build passing - **DONE** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **Display Enhancement Design** | Scoped per-display shuffle + arrangement view, architecture research, design decisions for exotic monitor layouts - **PLANNED** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **MAS Plan Execution** | Removed Sparkle (5 tasks), cleaned 14 prints (4 tasks), verified Release build — all MAS blockers resolved, v1.1 build 110 - **DONE** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **MAS Blocker Audit & Plan** | Full audit (Sparkle, private APIs, sandbox), created 10-task implementation plan across 3 waves - **PLANNED** | [2026-03-09](2026-03-09.md) |
+| 2026-03-09 | **UI Polish Implementation** | Implemented all 3 polish items (menu bar, thumbnails, sidebar), researched Mac App Store publishing - **DONE** | [2026-03-09](2026-03-09.md) |
+| 2026-03-07 | **UI Polish Planning** | Analyzed Vidwall, created 3-item polish plan (menu bar, thumbnails, sidebar) - **PLANNED** | [2026-03-07](2026-03-07.md) |
+| 2026-01-18 | **Screen Saver Support** | App Group sharing, Swift 6 concurrency fixes, build success - **TESTING** | [2026-01-18](2026-01-18.md) |
 | 2026-01-17 | **v1.0 Release (Part 11)** | Sparkle integration, DMG, GitHub release - **PUBLISHED** | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | Per-Display Controls (Part 10) | Added inline prev/play/next buttons per display card | [2026-01-17](2026-01-17.md) |
 | 2026-01-17 | UI Improvements (Part 9) | Renamed "Default" to "All Videos", added multi-display Now Playing | [2026-01-17](2026-01-17.md) |

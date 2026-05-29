@@ -52,7 +52,9 @@ final class VideoMetadataLoader: ObservableObject {
                 // Load video track for resolution
                 let tracks = try await asset.loadTracks(withMediaType: .video)
                 guard let videoTrack = tracks.first else {
+                    #if DEBUG
                     print("VideoMetadataLoader: No video track for \(url.lastPathComponent)")
+                    #endif
                     return
                 }
 
@@ -75,7 +77,9 @@ final class VideoMetadataLoader: ObservableObject {
                 }
 
             } catch {
+                #if DEBUG
                 print("VideoMetadataLoader: Failed to load metadata for \(url.lastPathComponent): \(error.localizedDescription)")
+                #endif
             }
         }
     }
@@ -109,7 +113,9 @@ final class VideoMetadataLoader: ObservableObject {
                 // Load video track for resolution
                 let tracks = try await asset.loadTracks(withMediaType: .video)
                 guard let videoTrack = tracks.first else {
+                    #if DEBUG
                     print("VideoMetadataLoader: No video track for \(url.lastPathComponent)")
+                    #endif
                     return
                 }
 
@@ -135,7 +141,9 @@ final class VideoMetadataLoader: ObservableObject {
                 }
 
             } catch {
+                #if DEBUG
                 print("VideoMetadataLoader: Failed to load metadata for \(url.lastPathComponent): \(error.localizedDescription)")
+                #endif
             }
         }
     }

@@ -125,7 +125,9 @@ final class ThumbnailCache: ObservableObject {
             return nsImage
 
         } catch {
+            #if DEBUG
             print("ThumbnailCache: Failed to generate thumbnail for \(url.lastPathComponent): \(error.localizedDescription)")
+            #endif
             return nil
         }
     }

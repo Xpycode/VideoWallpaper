@@ -2,40 +2,13 @@
 
 Run through the production checklist interactively.
 
-## Step 1: Load Checklist
+## Step 1: Load Checklists
 
-Read `docs/30_production-checklist.md` to get the checklist items.
+Read both source documents:
+- `docs/30_production-checklist.md` - Code quality and release prep
+- `docs/33_app-minimums.md` - Baseline features (updates, logging, UI polish)
 
-If it doesn't exist, use this default checklist:
-
-```
-## Code Quality
-- [ ] No compiler warnings
-- [ ] No force unwraps in production code
-- [ ] Error handling is comprehensive
-- [ ] No hardcoded secrets or API keys
-
-## User Experience
-- [ ] Loading states for async operations
-- [ ] Error messages are user-friendly
-- [ ] Empty states are handled
-- [ ] Accessibility labels on interactive elements
-
-## Testing
-- [ ] Core user flows tested manually
-- [ ] Edge cases considered
-- [ ] Different screen sizes tested (if applicable)
-
-## Performance
-- [ ] No obvious memory leaks
-- [ ] Reasonable launch time
-- [ ] Smooth scrolling/animations
-
-## Release Prep
-- [ ] Version number updated
-- [ ] Release notes drafted
-- [ ] Screenshots updated (if App Store)
-```
+Display the checklist sections from these files.
 
 ## Step 2: Interactive Review
 

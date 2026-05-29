@@ -22,6 +22,9 @@ class DesktopVideoView: NSView {
     /// Which player layer is currently active (true = A, false = B)
     private var isPlayerAActive = true
 
+    /// Screen identifier for per-screen settings
+    private var screenId: String = "default"
+
     /// Observer for video scaling preference changes
     private var scalingObserver: AnyCancellable?
 
@@ -48,18 +51,27 @@ class DesktopVideoView: NSView {
         scalingObserver?.cancel()
     }
 
-    /// Observe changes to the videoScaling preference and update layers in real-time
+    /// Observe changes to the video scaling preference and update layers in real-time
     private func setupScalingObserver() {
-        scalingObserver = UserDefaults.standard.publisher(for: \.videoScaling)
-            .dropFirst() // Skip initial value (already applied in setPlayers)
+        scalingObserver = NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
             .receive(on: RunLoop.main)
-            .sink { [weak self] newValue in
-                let scaling = VideoScaling(rawValue: newValue) ?? .fill
-                self?.updateVideoScaling(scaling)
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                let persistence = PlaylistPersistence.forScreen(self.screenId)
+                let scaling = VideoScaling(rawValue: persistence.videoScaling) ?? .fill
+                self.updateVideoScaling(scaling)
             }
     }
 
     // MARK: - Layer Setup
+
+    /// Sets the screen identifier for per-screen settings
+    func setScreenId(_ id: String) {
+        self.screenId = id
+        // Re-setup observer with new screenId
+        scalingObserver?.cancel()
+        setupScalingObserver()
+    }
 
     /// Creates this view's own AVPlayerLayers connected to the shared players.
     /// Each monitor needs its own layers since CALayer can only have one superlayer.
@@ -83,7 +95,7 @@ class DesktopVideoView: NSView {
             playerLayer.backgroundColor = CGColor.black
 
             // Apply current scaling setting
-            let scaling = VideoScaling(rawValue: UserDefaults.standard.integer(forKey: "videoScaling")) ?? .fill
+            let scaling = VideoScaling(rawValue: PlaylistPersistence.forScreen(screenId).videoScaling) ?? .fill
             playerLayer.videoGravity = scaling.avLayerVideoGravity
         }
 
@@ -103,8 +115,9 @@ class DesktopVideoView: NSView {
     func performTransition(toPlayerA: Bool) {
         guard toPlayerA != isPlayerAActive else { return }
 
-        let transitionType = TransitionType(rawValue: UserDefaults.standard.integer(forKey: "transitionType")) ?? .crossDissolve
-        let duration = UserDefaults.standard.double(forKey: "transitionDuration").clamped(to: 0.5...5.0)
+        let persistence = PlaylistPersistence.forScreen(screenId)
+        let transitionType = TransitionType(rawValue: persistence.transitionType) ?? .crossDissolve
+        let duration = persistence.transitionDuration.clamped(to: 0.5...5.0)
 
         let newLayer = toPlayerA ? playerLayerA : playerLayerB
         let oldLayer = toPlayerA ? playerLayerB : playerLayerA
@@ -171,9 +184,3 @@ private extension Double {
     }
 }
 
-// KVO-compatible key path for videoScaling preference
-extension UserDefaults {
-    @objc dynamic var videoScaling: Int {
-        return integer(forKey: "videoScaling")
-    }
-}

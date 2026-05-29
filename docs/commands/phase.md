@@ -27,6 +27,25 @@ Update the **Phase:** line in `docs/PROJECT_STATE.md` with the new phase.
 
 Add a timestamp comment: `<!-- Phase changed: YYYY-MM-DD -->`
 
+## Step 3b: Review Readiness
+
+When changing phase, prompt to review the Readiness section:
+
+```
+Current Readiness:
+| Dimension    | Status |
+|--------------|--------|
+| Features     | [?]    |
+| UI/Polish    | [?]    |
+| Testing      | [?]    |
+| Docs         | [?]    |
+| Distribution | [?]    |
+
+Update any dimensions? (y/n)
+```
+
+**For transitions to polish/shipping:** Require at least Features to be ✅ or 🔶.
+
 ## Step 4: Suggest Relevant Docs
 
 Based on the new phase, suggest relevant documentation:
@@ -36,8 +55,11 @@ Based on the new phase, suggest relevant documentation:
 | discovery | 10_new-project.md, 11_ai-context-template.md |
 | planning | 04_architecture-decisions.md, 51_planning-patterns.md |
 | implementation | 20_swiftui-gotchas.md, 21_coordinate-systems.md, 31_debugging.md |
-| polish | 30_production-checklist.md, 40_typography.md, 41_apple-ui.md |
-| shipping | 30_production-checklist.md, 32_git-workflow.md |
+| polish | 30_production-checklist.md, 33_app-minimums.md, 40_typography.md |
+| shipping | 30_production-checklist.md, 33_app-minimums.md, 32_git-workflow.md |
+
+**For polish/shipping phases**, also remind:
+> "Have you run `/minimums` to check baseline features?"
 
 ## Step 5: Confirm
 

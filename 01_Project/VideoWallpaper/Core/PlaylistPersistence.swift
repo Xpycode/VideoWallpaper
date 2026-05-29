@@ -179,6 +179,12 @@ class PlaylistPersistence: ObservableObject {
     private var shuffleStorageKey: String { "playlist_\(screenId)_shuffle" }
     private var loopStorageKey: String { "playlist_\(screenId)_loop" }
     private var assignedPlaylistStorageKey: String { "playlist_\(screenId)_assignedPlaylist" }
+    private var videoScalingStorageKey: String { "playlist_\(screenId)_videoScaling" }
+    private var transitionTypeStorageKey: String { "playlist_\(screenId)_transitionType" }
+    private var transitionDurationStorageKey: String { "playlist_\(screenId)_transitionDuration" }
+    private var playbackRateStorageKey: String { "playlist_\(screenId)_playbackRate" }
+    private var audioMutedStorageKey: String { "playlist_\(screenId)_audioMuted" }
+    private var audioVolumeStorageKey: String { "playlist_\(screenId)_audioVolume" }
     
     /// Global metadata storage key (shared across all monitors)
     private static let metadataStorageKey = "playlist_global_metadata"
@@ -209,6 +215,36 @@ class PlaylistPersistence: ObservableObject {
                 UserDefaults.standard.removeObject(forKey: assignedPlaylistStorageKey)
             }
         }
+    }
+
+    /// Video scaling mode (per-screen, falls back to global)
+    @Published var videoScaling: Int {
+        didSet { UserDefaults.standard.set(videoScaling, forKey: videoScalingStorageKey) }
+    }
+
+    /// Transition type (per-screen, falls back to global)
+    @Published var transitionType: Int {
+        didSet { UserDefaults.standard.set(transitionType, forKey: transitionTypeStorageKey) }
+    }
+
+    /// Transition duration (per-screen, falls back to global)
+    @Published var transitionDuration: Double {
+        didSet { UserDefaults.standard.set(transitionDuration, forKey: transitionDurationStorageKey) }
+    }
+
+    /// Playback rate (per-screen, falls back to global)
+    @Published var playbackRate: Float {
+        didSet { UserDefaults.standard.set(playbackRate, forKey: playbackRateStorageKey) }
+    }
+
+    /// Audio muted (per-screen, falls back to global)
+    @Published var audioMuted: Bool {
+        didSet { UserDefaults.standard.set(audioMuted, forKey: audioMutedStorageKey) }
+    }
+
+    /// Audio volume (per-screen, falls back to global)
+    @Published var audioVolume: Float {
+        didSet { UserDefaults.standard.set(audioVolume, forKey: audioVolumeStorageKey) }
     }
 
     /// The assigned named playlist, if any
@@ -251,6 +287,21 @@ class PlaylistPersistence: ObservableObject {
             self.assignedPlaylistId = id
         }
 
+        // Per-screen settings with global fallback for migration
+        let defaults = UserDefaults.standard
+        self.videoScaling = defaults.object(forKey: "playlist_\(screenId)_videoScaling") as? Int
+            ?? defaults.integer(forKey: "videoScaling")
+        self.transitionType = defaults.object(forKey: "playlist_\(screenId)_transitionType") as? Int
+            ?? (defaults.object(forKey: "transitionType") as? Int ?? TransitionType.crossDissolve.rawValue)
+        self.transitionDuration = defaults.object(forKey: "playlist_\(screenId)_transitionDuration") as? Double
+            ?? (defaults.object(forKey: "transitionDuration") as? Double ?? 1.0)
+        self.playbackRate = defaults.object(forKey: "playlist_\(screenId)_playbackRate") as? Float
+            ?? (defaults.object(forKey: "playbackRate") as? Float ?? 1.0)
+        self.audioMuted = defaults.object(forKey: "playlist_\(screenId)_audioMuted") as? Bool
+            ?? (defaults.object(forKey: "audioMuted") as? Bool ?? true)
+        self.audioVolume = defaults.object(forKey: "playlist_\(screenId)_audioVolume") as? Float
+            ?? (defaults.object(forKey: "audioVolume") as? Float ?? 0.5)
+
         load()
     }
 
@@ -268,7 +319,9 @@ class PlaylistPersistence: ObservableObject {
             // Load global metadata into items
             loadGlobalMetadata()
         } catch {
+            #if DEBUG
             print("PlaylistPersistence[\(screenId)]: Failed to decode items: \(error)")
+            #endif
             items = []
         }
     }
@@ -281,7 +334,9 @@ class PlaylistPersistence: ObservableObject {
             // Also save metadata globally
             saveGlobalMetadata()
         } catch {
+            #if DEBUG
             print("PlaylistPersistence[\(screenId)]: Failed to encode items: \(error)")
+            #endif
         }
     }
     

@@ -65,5 +65,6 @@ Feature scaffolded: docs/features/[feature-name].md
 Next steps:
 1. Fill in the requirements
 2. Run /decide for any architectural choices
-3. Update the feature doc as you implement
+3. Check 33_app-minimums.md for baseline features to include
+4. Update the feature doc as you implement
 ```
