@@ -8,12 +8,14 @@ struct SourcesSectionView: View {
     @State private var overlapAlert: OverlapInfo?
     @State private var pendingFolderURL: URL?
     @State private var autoCollapseArmed = false  // true once user starts empty
+    var dragProvider: (() -> NSItemProvider)? = nil
 
     var body: some View {
         CollapsibleSection(
             title: "VIDEO SOURCES",
             storageKey: "sourcesExpanded",
             defaultExpanded: true,
+            dragProvider: dragProvider,
             headerTrailing: { headerTrailing }
         ) {
             contentArea

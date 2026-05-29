@@ -3,12 +3,14 @@ import SwiftUI
 struct DisplaysSectionView: View {
     @EnvironmentObject private var appDelegate: AppDelegate
     @ObservedObject private var syncManager = SyncManager.shared
+    var dragProvider: (() -> NSItemProvider)? = nil
 
     var body: some View {
         CollapsibleSection(
             title: "DISPLAYS",
             storageKey: "displaysSectionExpanded",
             defaultExpanded: true,
+            dragProvider: dragProvider,
             headerTrailing: { transportControls },
             content: { sectionContent }
         )

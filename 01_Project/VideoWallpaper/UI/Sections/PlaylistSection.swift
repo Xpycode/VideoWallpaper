@@ -1,17 +1,24 @@
 import SwiftUI
 import AppKit
 
-/// Non-collapsible bottom section: display tab bar + playlist content.
-/// Owns selectedScreenId state and passes it down to ConsolidatedPlaylistView.
 struct PlaylistSection: View {
     @ObservedObject private var syncManager = SyncManager.shared
     @State private var selectedScreenId: String = "default"
     @State private var availableScreens: [(id: String, name: String)] = []
+    var dragProvider: (() -> NSItemProvider)? = nil
 
     var body: some View {
-        VStack(spacing: 0) {
-            displayTabBar
-            ConsolidatedPlaylistView(selectedScreenId: $selectedScreenId)
+        CollapsibleSection(
+            title: "PLAYLIST",
+            storageKey: "playlistSectionExpanded",
+            defaultExpanded: true,
+            dragProvider: dragProvider
+        ) {
+            VStack(spacing: 0) {
+                displayTabBar
+                ConsolidatedPlaylistView(selectedScreenId: $selectedScreenId)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
         .onAppear { loadScreens() }
         .onReceive(
@@ -73,7 +80,6 @@ struct PlaylistSection: View {
             }
         }
 
-        // Fall back to a single "Default" entry if no screens detected
         if screens.isEmpty {
             screens = [("default", "Default")]
         }

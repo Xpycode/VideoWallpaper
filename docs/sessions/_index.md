@@ -10,6 +10,7 @@ Video Wallpaper - macOS windowed app (Dock + menu bar) for video desktop wallpap
 
 | Date | Focus | Outcome | Log |
 |------|-------|---------|-----|
+| 2026-05-29 | **Layout Redesign + Section UX** | Waves 3–4 execution (displays, deleted obsolete files), then: draggable/reorderable sections via grip handles + drop delegates, playlist section made collapsible — **DONE** | [2026-05-29](2026-05-29.md) |
 | 2026-05-28 | **Layout Redesign Planning** | Accordion window plan: 3 collapsible sections replace sidebar, custom CollapsibleSection (not DisclosureGroup — bug), per-display ⚙ popover, Advanced Settings → cmd+, — **PLANNED** | [2026-05-28](2026-05-28.md) |
 | 2026-04-28 | **Onboarding UX Implementation** | Drop-anywhere targets, mixed file/folder picker, file-bookmark persistence, hero empty state, auto-activate, menu-bar shortcuts — 6 commits, build green - **DONE** | [2026-04-28](2026-04-28.md) |
 | 2026-03-09 | **All User Testing Issues** | Resolved all 15 feedback items: sources UX, badges, subfolder info, add-to-playlist, multi-select, folder grouping, sync tiles, display ordering — 8 commits - **DONE** | [2026-03-09](2026-03-09.md) |

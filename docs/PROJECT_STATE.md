@@ -4,22 +4,20 @@
 - **Project:** Video Wallpaper
 - **Started:** 2026-01-01
 - **Current Phase:** implementation
-- **Last Session:** 2026-05-28
+- **Last Session:** 2026-05-29
 - **Version:** 1.1 (build 110) — MAS-ready
 
 ## Current Focus
-**Layout Redesign** — Replace NavigationSplitView sidebar with single-pane accordion window. Plan complete, implementation not yet started.
-
-Plan: `docs/plans/layout-redesign-accordion.md`
+**MAS Submission** — Accordion layout complete + polished (drag-reorder, collapsible playlist). Next: manual regression test T1–T10, App Store screenshots, submit v1.1 (build 110).
 
 Next steps:
-- [x] Wave 0: `CollapsibleSection.swift`, `MainWindowView.swift` stub, `Settings {}` scene, window min 480×400
-- [x] Wave 1: `SourcesSectionView.swift`
-- [x] Wave 2: `PlaylistSection` + `ConsolidatedPlaylistView` binding refactor
-- [x] Wave 3: `DisplaysSectionView` + `DisplayTileView` + `DisplaySettingsPopover`
-- [x] Wave 4: Delete sidebar files, full regression
-- [ ] Review T1–T10 onboarding test results (pending from 2026-04-28)
-- [ ] After redesign: App Store screenshots, metadata, submit
+- [x] Wave 0–4: Accordion layout implementation
+- [x] Draggable/reorderable sections via grip handles + drop delegates
+- [x] Playlist section made collapsible
+- [ ] Manual regression test T1–T10 (onboarding spec, pending since 2026-04-28)
+- [ ] Merge `feature/layout-redesign-accordion` → `main`
+- [ ] App Store screenshots with new accordion UI
+- [ ] Submit v1.1 (build 110) to MAS
 
 ## Release Info
 - **GitHub:** https://github.com/Xpycode/VideoWallpaper
@@ -37,6 +35,9 @@ Next steps:
 None.
 
 ## Key Decisions Made (recent)
+- 2026-05-29: Sections are drag-reorderable; order persisted in UserDefaults (`mainWindowSectionOrder`)
+- 2026-05-29: Drag initiates only from grip icon in header (not full header) — avoids conflict with collapse tap
+- 2026-05-29: Playlist section is now collapsible (storage key `playlistSectionExpanded`)
 - 2026-05-28: Accordion layout — 3 collapsible sections (Displays, Sources, Playlist) replace 5 sidebar items
 - 2026-05-28: Do NOT use SwiftUI DisclosureGroup — confirmed macOS hit-testing bug; use custom CollapsibleSection
 - 2026-05-28: Transport controls stay visible in Displays section header even when collapsed
@@ -60,4 +61,4 @@ None.
 - [ ] Video duration in status display
 
 ---
-*Last updated 2026-03-09*
+*Last updated 2026-05-29*
