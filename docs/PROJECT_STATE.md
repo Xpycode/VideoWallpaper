@@ -8,15 +8,16 @@
 - **Version:** 1.1 (build 110) — MAS-ready
 
 ## Current Focus
-**Window auto-resize polish** — Main window should shrink/grow to fit content as sections expand/collapse. Core mechanism works (all-collapsed → ~127px ✓), but Playlist-collapsed-with-other-sections-expanded still shows empty space. Fix built, not yet verified.
+**Window auto-resize: verified working** (2026-07-12). The PreferenceKey measurement channel turned out to be dead on macOS (only ever delivered the initial 0) — replaced with GeometryReader onAppear/onChange callbacks; display tile row given rigid width-derived height so it can't silently absorb window squeeze. Cold-launch grow AND shrink verified with window-bounds measurements + screenshots.
 
 Next steps:
 - [x] Wave 0–4: Accordion layout implementation
 - [x] Draggable/reorderable sections via grip handles + drop delegates
 - [x] Playlist section made collapsible
-- [x] Window auto-resize on section toggle (partial — all-collapsed works)
-- [ ] **Verify** conditional `maxHeight` fix resolves Playlist-collapsed empty-space (built, not tested)
-- [ ] Check cold-launch resize fires correctly (may need `asyncAfter` or remove `isVisible` guard)
+- [x] Window auto-resize on section toggle — verified (grow + shrink + cold launch)
+- [x] Cold-launch resize fires correctly (root cause was dead PreferenceKey, not `isVisible` guard)
+- [ ] User spot-check: collapse-all and playlist-expand toggles by hand
+- [ ] Polish: DISPLAYS header shows focus ring; transport buttons very small (10pt) — user finds them irritating
 - [ ] Manual regression test T1–T10 (onboarding spec, pending since 2026-04-28)
 - [ ] Merge `feature/layout-redesign-accordion` → `main`
 - [ ] App Store screenshots with new accordion UI
@@ -38,6 +39,8 @@ Next steps:
 None.
 
 ## Key Decisions Made (recent)
+- 2026-07-12: Content height measured via GeometryReader onAppear/onChange callbacks, NOT PreferenceKey (updates from layout-time backgrounds never propagate on macOS); main window matched by `.titled` styleMask (desktop windows are borderless)
+- 2026-07-12: Display tile row height is rigid (width × 9/16) — tiles must never absorb window squeeze
 - 2026-05-29: Window auto-resizes to fit content on section toggle (like System Preferences); chrome via `safeAreaInsets.top`; tile height computed from actual window width
 - 2026-05-29: Playlist section needs conditional `maxHeight` — `.infinity` when expanded (List needs it), `nil` when collapsed (so VStack measures actual content height via GeometryReader)
 - 2026-05-29: Sections are drag-reorderable; order persisted in UserDefaults (`mainWindowSectionOrder`)
@@ -66,4 +69,4 @@ None.
 - [ ] Video duration in status display
 
 ---
-*Last updated 2026-05-29 (Part 3)*
+*Last updated 2026-07-12*

@@ -6,13 +6,6 @@ enum SectionKind: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
-private struct ContentHeightKey: PreferenceKey {
-    static let defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
-
 struct MainWindowView: View {
     @EnvironmentObject private var appDelegate: AppDelegate
     @State private var sectionOrder: [SectionKind] = Self.loadOrder()
@@ -36,18 +29,19 @@ struct MainWindowView: View {
                     )
             }
         }
-        .frame(minWidth: 480, maxWidth: .infinity, minHeight: 75)
+        // Background BEFORE .frame: measures the VStack's natural content height.
+        // (After .frame it would measure the wrapper, not the content.)
+        // Direct onAppear/onChange callbacks instead of a PreferenceKey: preference
+        // updates from a layout-time GeometryReader background are not reliably
+        // delivered on macOS — observed only the initial defaultValue arriving.
         .background(
             GeometryReader { geo in
-                Color.clear.preference(key: ContentHeightKey.self, value: geo.size.height)
+                Color.clear
+                    .onAppear { contentHeightChanged(geo.size.height) }
+                    .onChange(of: geo.size.height) { contentHeightChanged($0) }
             }
         )
-        // When playlist is collapsed, the VStack sizes to actual content — use that measurement.
-        // When playlist is expanded it has maxHeight:.infinity and fills the window, so skip.
-        .onPreferenceChange(ContentHeightKey.self) { measured in
-            guard !playlistExpanded else { return }
-            resizeWindow(to: measured)
-        }
+        .frame(minWidth: 480, maxWidth: .infinity, minHeight: 75, alignment: .top)
         // When playlist expands from a small window, grow to show minimum content.
         .onChange(of: playlistExpanded) { expanded in
             if expanded { scheduleExpandResize() }
@@ -84,6 +78,14 @@ struct MainWindowView: View {
 
     // MARK: - Auto window resize
 
+    /// Fired by the GeometryReader whenever the VStack's natural content height
+    /// changes. Only drives the window when playlist is collapsed — expanded,
+    /// the playlist fills the window and the expand path handles sizing.
+    private func contentHeightChanged(_ height: CGFloat) {
+        guard !playlistExpanded, height > 0 else { return }
+        resizeWindow(to: height)
+    }
+
     /// Resize triggered by the GeometryReader — used when playlist is collapsed.
     private func resizeWindow(to contentHeight: CGFloat) {
         DispatchQueue.main.async {
@@ -91,12 +93,19 @@ struct MainWindowView: View {
         }
     }
 
+    /// The visible main window. Desktop wallpaper windows are borderless NSWindows
+    /// wider than 460 — requiring .titled is what keeps them out of the match.
+    private func mainWindow() -> NSWindow? {
+        NSApp.windows.first {
+            $0.styleMask.contains(.titled) && !($0 is NSPanel)
+                && $0.isVisible && $0.frame.width >= 460
+        }
+    }
+
     /// Resize triggered when playlist expands — grow to show minimum playlist content.
     private func scheduleExpandResize() {
         DispatchQueue.main.async {
-            guard let window = NSApp.windows.first(where: {
-                !($0 is NSPanel) && $0.isVisible && $0.frame.width >= 460
-            }) else { return }
+            guard let window = mainWindow() else { return }
 
             let minContent = computeExpandedMinHeight(windowWidth: window.frame.width)
             let chromeH = window.contentView?.safeAreaInsets.top ?? 28
@@ -109,13 +118,13 @@ struct MainWindowView: View {
     }
 
     private func applyWindowHeight(_ contentHeight: CGFloat) {
-        guard let window = NSApp.windows.first(where: {
-            !($0 is NSPanel) && $0.isVisible && $0.frame.width >= 460
-        }) else { return }
+        guard let window = mainWindow() else { return }
 
         let chromeH = window.contentView?.safeAreaInsets.top ?? 28
         let maxH = (NSScreen.main?.visibleFrame.height ?? 800) * 0.9
-        let targetWindowH = min(contentHeight + chromeH, maxH)
+        // Floor at the VStack's own minHeight — transient measurements during
+        // window setup must never shrink the window below its content minimum.
+        let targetWindowH = min(max(contentHeight, 75) + chromeH, maxH)
 
         guard abs(window.frame.height - targetWindowH) > 2 else { return }
 

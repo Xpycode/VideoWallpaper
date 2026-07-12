@@ -5,6 +5,8 @@ struct DisplaysSectionView: View {
     @ObservedObject private var syncManager = SyncManager.shared
     var dragProvider: (() -> NSItemProvider)? = nil
 
+    @State private var tileRowWidth: CGFloat = 0
+
     var body: some View {
         CollapsibleSection(
             title: "DISPLAYS",
@@ -78,6 +80,17 @@ struct DisplaysSectionView: View {
                         .frame(maxWidth: .infinity)
                     }
                 }
+                .background(
+                    GeometryReader { geo in
+                        Color.clear
+                            .onAppear { tileRowWidth = geo.size.width }
+                            .onChange(of: geo.size.width) { tileRowWidth = $0 }
+                    }
+                )
+                // Rigid height from width: without this the 16:9 tiles are the only
+                // flexible children in the main VStack, so a too-short window squeezes
+                // them instead of growing — and the window-fit loop never sees it.
+                .frame(height: tileRowWidth > 0 ? tileRowHeight(rowWidth: tileRowWidth, count: displays.count) : nil)
                 .padding(.horizontal, 8)
                 .padding(.top, 8)
                 .padding(.bottom, 4)
@@ -88,5 +101,11 @@ struct DisplaysSectionView: View {
                 .padding(.horizontal, 12)
                 .padding(.bottom, 8)
         }
+    }
+
+    private func tileRowHeight(rowWidth: CGFloat, count: Int) -> CGFloat {
+        let n = max(count, 1)
+        let tileWidth = (rowWidth - 8.0 * CGFloat(n - 1)) / CGFloat(n)
+        return max(tileWidth * 9.0 / 16.0, 0)
     }
 }
