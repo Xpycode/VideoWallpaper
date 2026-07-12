@@ -8,12 +8,15 @@
 - **Version:** 1.1 (build 110) — MAS-ready
 
 ## Current Focus
-**MAS Submission** — Accordion layout complete + polished (drag-reorder, collapsible playlist). Next: manual regression test T1–T10, App Store screenshots, submit v1.1 (build 110).
+**Window auto-resize polish** — Main window should shrink/grow to fit content as sections expand/collapse. Core mechanism works (all-collapsed → ~127px ✓), but Playlist-collapsed-with-other-sections-expanded still shows empty space. Fix built, not yet verified.
 
 Next steps:
 - [x] Wave 0–4: Accordion layout implementation
 - [x] Draggable/reorderable sections via grip handles + drop delegates
 - [x] Playlist section made collapsible
+- [x] Window auto-resize on section toggle (partial — all-collapsed works)
+- [ ] **Verify** conditional `maxHeight` fix resolves Playlist-collapsed empty-space (built, not tested)
+- [ ] Check cold-launch resize fires correctly (may need `asyncAfter` or remove `isVisible` guard)
 - [ ] Manual regression test T1–T10 (onboarding spec, pending since 2026-04-28)
 - [ ] Merge `feature/layout-redesign-accordion` → `main`
 - [ ] App Store screenshots with new accordion UI
@@ -35,6 +38,8 @@ Next steps:
 None.
 
 ## Key Decisions Made (recent)
+- 2026-05-29: Window auto-resizes to fit content on section toggle (like System Preferences); chrome via `safeAreaInsets.top`; tile height computed from actual window width
+- 2026-05-29: Playlist section needs conditional `maxHeight` — `.infinity` when expanded (List needs it), `nil` when collapsed (so VStack measures actual content height via GeometryReader)
 - 2026-05-29: Sections are drag-reorderable; order persisted in UserDefaults (`mainWindowSectionOrder`)
 - 2026-05-29: Drag initiates only from grip icon in header (not full header) — avoids conflict with collapse tap
 - 2026-05-29: Playlist section is now collapsible (storage key `playlistSectionExpanded`)
@@ -61,4 +66,4 @@ None.
 - [ ] Video duration in status display
 
 ---
-*Last updated 2026-05-29*
+*Last updated 2026-05-29 (Part 3)*
